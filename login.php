@@ -33,18 +33,114 @@ if (isset($_POST['login'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="icon" type="image/png" href="logo.jpg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>RSC - LOGIN</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #0066cc, #00bfff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        .card {
+            background-color: #f8f9fa;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+        }
+        .card-title {
+            color: #1a73e8;
+            font-weight: bold;
+            text-align: center;
+            font-size: 24px;
+        }
+        .form-label {
+            color: #1a73e8;
+            font-size: 14px;
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid silver;
+        }
+        .form-control:focus {
+            border-color: #155bb5;
+            box-shadow: 0 0 5px rgba(26, 115, 232, 0.5);
+        }
+        .btn-primary {
+            background: linear-gradient(to right, #0066cc, #00bfff);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(to right, #0066cc, #00bfff);
+        }
+        .link-daftar {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .link-daftar a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+        .link-daftar a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 
 <body>
-    <?php include "layout/header.html" ?>
-    <h3>Masuk akun</h3>
-    <b><?= $login_message ?></b>
-    <form action="login.php" method="POST">
-        <input type="text" placeholder="username atau email" name="username_or_email" required /> <!-- Menggunakan satu input -->
-        <input type="password" placeholder="password" name="password" required />
-        <button type="submit" name="login">masuk sekarang</button>
-    </form>
+    <!--card login start-->
+    <div class="card">
+        <div class="text-center mb-3">
+            <img src="layout/logo.jpg" alt="logo" style="width: 120px; height: auto; border-radius: 50%;">
+        </div>
+        <h5 class="card-title">Login</h5>
+
+        <!-- Tampilkan pesan jika login gagal -->
+        <b style="color: red;"><?php echo $login_message; ?></b>
+
+        <form action="login.php" method="POST">
+            <div class="mb-3">
+                <label for="username_or_email" class="form-label">Username atau Email</label>
+                <input type="text" class="form-control" id="username_or_email" name="username_or_email" placeholder="Masukkan Username atau Email Anda" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan Password Anda" required>
+            </div>
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="showPassword" onclick="togglePasswordVisibility()">
+                <label class="form-check-label" for="showPassword">Show Password</label>
+            </div>
+            <button type="submit" name="login" class="btn btn-primary mt-3">Login</button>
+            <div class="link-daftar">
+                <p>Tidak punya akun? <a href="register.php">Daftar Sekarang</a></p>
+            </div>
+        </form>
+    </div>
+    <!--card login end-->
+
+    <script>
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById("password");
+            passwordField.type = passwordField.type === "password" ? "text" : "password";
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 
 </html>
