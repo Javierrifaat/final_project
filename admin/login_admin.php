@@ -1,43 +1,36 @@
 <?php
-include "service/database.php";
+include "../service/database.php";
 session_start();
 
 $login_message = "";
 
 if (isset($_POST['login'])) {
-    $username_or_email = $_POST['username_or_email'];
+    $username = $_POST['username'];
     $password = $_POST['password'];
-    $hash_password = hash('sha256', $password);
 
-    // Query untuk login user
-    $sql = "SELECT * FROM users WHERE (username='$username_or_email' OR email='$username_or_email') AND password='$hash_password' AND role='user'";
-    $result = $db->query($sql);
-
-    if ($result->num_rows > 0) {
-        $data = $result->fetch_assoc();
-        $_SESSION["username"] = $data["username"];
-        $_SESSION["role"] = $data["role"];
+    // Cek apakah username dan password yang dimasukkan adalah "admin"
+    if ($username === 'admin' && $password === 'admin') {
+        // Jika benar, simpan data session
+        $_SESSION["username"] = $username;
+        $_SESSION["role"] = 'admin'; // Simpan role
         $_SESSION["is_login"] = true;
 
-        // Redirect ke halaman user
-        header("location: dashboard.php");
+        // Redirect ke halaman admin
+        header("location: dashboard_admin.php");
         exit();
     } else {
-        $login_message = "Username, Email, atau Password salah!";
+        $login_message = "Username atau Password salah!";
     }
 }
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="logo.jpg">
+    <link rel="icon" type="image/png" href="../layout/logo.jpg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <title>RSC - LOGIN</title>
+    <title>RSC - LOGIN ADMIN</title>
     <style>
         body {
             background: linear-gradient(to right, #0066cc, #00bfff);
@@ -86,55 +79,30 @@ if (isset($_POST['login'])) {
         .btn-primary:hover {
             background: linear-gradient(to right, #0066cc, #00bfff);
         }
-        .link-daftar {
-            display: block;
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-            color: #6c757d;
-        }
-        .link-daftar a {
-            color: #1a73e8;
-            text-decoration: none;
-        }
-        .link-daftar a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
-
 <body>
     <!--card login start-->
     <div class="card">
         <div class="text-center mb-3">
-            <img src="layout/logo.jpg" alt="logo" style="width: 120px; height: auto; border-radius: 50%;">
+            <img src="../layout/logo.jpg" alt="logo" style="width: 120px; height: auto; border-radius: 50%;">
         </div>
-        <h5 class="card-title">Login</h5>
-
-        <!-- Tampilkan pesan jika login gagal -->
-        <b style="color: red;"><?php echo $login_message; ?></b>
-
-        <form action="login.php" method="POST">
+        <h5 class="card-title">Login Admin</h5>
+        <form method="POST" action="">
             <div class="mb-3">
-                <label for="username_or_email" class="form-label">Username atau Email</label>
-                <input type="text" class="form-control" id="username_or_email" name="username_or_email" placeholder="Masukkan Username atau Email Anda" required>
+                <label for="username" class="form-label">Username</label>
+                <input type="text" name="username" id="username" class="form-control" placeholder="Masukkan Username Anda" required>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan Password Anda" required>
+                <input type="password" name="password" id="password" class="form-control" placeholder="Masukkan Password Anda" required>
             </div>
             <div class="form-check mb-3">
                 <input type="checkbox" class="form-check-input" id="showPassword" onclick="togglePasswordVisibility()">
                 <label class="form-check-label" for="showPassword">Show Password</label>
             </div>
             <button type="submit" name="login" class="btn btn-primary mt-3">Login</button>
-            <div class="link-daftar">
-                <p>Tidak punya akun? <a href="register.php">Daftar Sekarang</a></p>
-            </div>
-        </form>
-        <div class="link-adminr">
-                <p>Login Admin<a href="admin/login_admin.php"> ADMIN</a></p>
-            </div>
+            <p class="text-danger text-center mt-3"><?php echo $login_message; ?></p>
         </form>
     </div>
     <!--card login end-->
@@ -148,5 +116,4 @@ if (isset($_POST['login'])) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
-
 </html>

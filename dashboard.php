@@ -5,6 +5,14 @@ if (isset($_POST['logout'])) {
     session_destroy();
     header('Location: index.php');
 }
+if (!isset($_SESSION["is_login"])) {
+    echo "You must login";
+    die;
+} elseif ($_SESSION["is_login"] == false) {
+    echo "You must login";
+    die;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -22,39 +30,39 @@ if (isset($_POST['logout'])) {
 
 <body class="bg-primary">
     <!-- Nav section start-->
-<nav class="navbar navbar-expand-lg navbar-light bg-transparent">
-    <div class="container-fluid">
-        <a class="navbar-brand text-light fs-3 fw-bold" href="">RSC</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link text-light px-3 py-2" aria-current="page" href="#">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-light px-3 py-2" href="#card-section">Event</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-light px-3 py-2" href="#contact-section">Contact</a>
-                </li>
-            </ul>
-            <!-- Dropdown untuk Email dan Logout -->
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                    <?= $_SESSION["username"] ?>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
+    <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
+        <div class="container-fluid">
+            <a class="navbar-brand text-light fs-3 fw-bold" href="">RSC</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link text-light px-3 py-2" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light px-3 py-2" href="#card-section">Event</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light px-3 py-2" href="#contact-section">Contact</a>
+                    </li>
                 </ul>
+                <!-- Dropdown untuk Email dan Logout -->
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        <?= $_SESSION["username"] ?>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
+                    </ul>
+                </div>
+                <form id="logout-form" action="dashboard.php" method="POST" style="display: none;">
+                    <input type="hidden" name="logout" value="1">
+                </form>
             </div>
-            <form id="logout-form" action="dashboard.php" method="POST" style="display: none;">
-                <input type="hidden" name="logout" value="1">
-            </form>
         </div>
-    </div>
-</nav>
+    </nav>
 
     <!--section end-->
 

@@ -1,57 +1,94 @@
 <?php
 session_start();
 
-// Menyertakan file koneksi database
+// Menyertakan file koneksi database dan Midtrans
 include '../service/database.php';
+require_once '../payment/midtrans-php-master/Midtrans.php'; // Pastikan library Midtrans sudah diunduh dan diinstal
 
-if (isset($_POST['logout'])) {
-    session_unset();
-    session_destroy();
-    header('Location: ../index.php');
-}
+// Konfigurasi Midtrans
+\Midtrans\Config::$serverKey = 'SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O';
+\Midtrans\Config::$isProduction = false; // Gunakan sandbox mode untuk testing
+\Midtrans\Config::$isSanitized = true;
+\Midtrans\Config::$is3ds = true;
 
-// Proses formulir pendaftaran
+
+
+
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ambil data dari formulir
     $email = $_POST['email'];
     $whatsapp = $_POST['whatsapp'];
-    $nama = $_POST['nama1']; // Menggunakan nama peserta 1
-    $nama_peserta_2 = $_POST['nama2']; // Menggunakan nama peserta 2
-    $nim = $_POST['nim1']; // Menggunakan NIM peserta 1
-    $nim_peserta_2 = $_POST['nim2']; // Menggunakan NIM peserta 2
+    $nama1 = $_POST['nama1'];
+    $nama2 = $_POST['nama2'];
+    $nim1 = $_POST['nim1'];
+    $nim2 = $_POST['nim2'];
     $prodi = $_POST['prodi'];
     $fakultas = $_POST['fakultas'];
     $angkatan = $_POST['angkatan'];
 
-    // Proses upload file bukti pembayaran
-    $bukti_pembayaran = $_FILES['bukti_pembayaran']['name'];
-    $target_dir = "lomba/uploads/";
-    $target_file = $target_dir . basename($bukti_pembayaran);
+    // Data pembayaran
+    $biaya_pendaftaran = 100000; // Biaya pendaftaran untuk badminton
+    $order_id = uniqid("badminton_"); // ID transaksi unik
 
-    // Cek jika direktori uploads ada
-    if (!is_dir($target_dir)) {
-        mkdir($target_dir, 0777, true); // Membuat direktori jika belum ada
-    }
-    
+    // Simpan data ke database terlebih dahulu
+    $sql = "INSERT INTO tlb (email, whatsapp, nama, nama_peserta_2, nim, nim_peserta_2, prodi, fakultas, angkatan, biaya, order_id, created_at)
+        VALUES ('$email', '$whatsapp', '$nama1', '$nama2', '$nim1', '$nim2', '$prodi', '$fakultas', '$angkatan', '$biaya_pendaftaran', '$order_id', NOW())";
 
-    if (move_uploaded_file($_FILES['bukti_pembayaran']['tmp_name'], $target_file)) {
-        // Masukkan data ke database
-        $sql = "INSERT INTO tlb (email, whatsapp, nama, nama_peserta_2, nim, nim_peserta_2, prodi, fakultas, angkatan, bukti_pembayaran, created_at)
-                VALUES ('$email', '$whatsapp', '$nama', '$nama_peserta_2', '$nim', '$nim_peserta_2', '$prodi', '$fakultas', '$angkatan', '$target_file', NOW())";
 
-        if (mysqli_query($db, $sql)) {
-            echo "Data berhasil disimpan!";
-        } else {
-            echo "Error: " . $sql . "<br>" . mysqli_error($db);
+
+    if (mysqli_query($db, $sql)) {
+        // Jika data berhasil disimpan, buat token pembayaran Midtrans
+        $transaction_details = [
+            'order_id' => $order_id,
+            'gross_amount' => $biaya_pendaftaran, // Total biaya
+        ];
+
+        $item_details = [
+            [
+                'id' => 'badminton_fee',
+                'price' => $biaya_pendaftaran,
+                'quantity' => 1,
+                'name' => "Pendaftaran Badminton",
+            ]
+        ];
+
+        $customer_details = [
+            'first_name' => $nama1,
+            'last_name' => $nama2,
+            'email' => $email,
+            'phone' => $whatsapp,
+        ];
+
+        $transaction = [
+            'transaction_details' => $transaction_details,
+            'item_details' => $item_details,
+            'customer_details' => $customer_details,
+        ];
+
+        try {
+            // Buat Snap Token
+            $snapToken = \Midtrans\Snap::getSnapToken($transaction);
+
+            // Redirect ke halaman pembayaran Snap
+            echo "<html><body>";
+            echo "<h3>Mohon tunggu, sedang diarahkan ke halaman pembayaran...</h3>";
+            echo "<script src='https://app.sandbox.midtrans.com/snap/snap.js' data-client-key='SB-Mid-client-uw81o6eb7cacAn_V'></script>";
+            echo "<script>snap.pay('$snapToken');</script>";
+            echo "</body></html>";
+            exit;
+        } catch (Exception $e) {
+            echo "Gagal membuat transaksi. Error: " . $e->getMessage();
         }
     } else {
-        echo "Sorry, there was an error uploading your file.";
+        echo "Error: " . $sql . "<br>" . mysqli_error($db);
     }
 }
 
-// Tutup koneksi
+// Tutup koneksi database
 mysqli_close($db);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -147,15 +184,11 @@ mysqli_close($db);
             <option value="2022">2022</option>
             <option value="2023">2023</option>
             <option value="2024">2024</option>
+
         </select> <br>
 
-        <label for="bukti_pembayaran">Bukti Pembayaran:</label>
-        <input type="file" id="bukti_pembayaran" name="bukti_pembayaran" required> <br>
-
-        <button type="submit">Kirim</button>
+        <button type="submit">Proses Pembayaran</button>
     </form>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
 
 </html>

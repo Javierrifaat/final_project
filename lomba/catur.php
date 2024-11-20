@@ -1,11 +1,89 @@
 <?php
 session_start();
-if (isset($_POST['logout'])) {
-    session_unset();
-    session_destroy();
-    header('Location: ../index.php');
-    exit(); // Pastikan untuk menghentikan eksekusi skrip setelah pengalihan
+
+// Menyertakan file koneksi database dan Midtrans
+include '../service/database.php';
+require_once '../payment/midtrans-php-master/Midtrans.php'; // Pastikan library Midtrans sudah diunduh dan diinstal
+
+// Konfigurasi Midtrans
+\Midtrans\Config::$serverKey = 'SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O';
+\Midtrans\Config::$isProduction = false; // Gunakan sandbox mode untuk testing
+\Midtrans\Config::$isSanitized = true;
+\Midtrans\Config::$is3ds = true;
+
+
+
+
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Ambil data dari formulir
+    $email = $_POST['email'];
+    $whatsapp = $_POST['whatsapp'];
+    $nama = $_POST['nama'];
+    $nim = $_POST['nim'];
+    $prodi = $_POST['prodi'];
+    $fakultas = $_POST['fakultas'];
+    $angkatan = $_POST['angkatan'];
+
+    // Data pembayaran
+    $biaya_pendaftaran_catur = 40000;
+    $order_id = uniqid("catur_");
+
+    // Simpan data ke database terlebih dahulu
+    $sql = "INSERT INTO tlc (email, whatsapp, nama, nim, prodi, fakultas, angkatan, biaya, order_id_catur, created_at)
+        VALUES ('$email', '$whatsapp', '$nama', '$nim', '$prodi', '$fakultas', '$angkatan', '$biaya_pendaftaran_catur', '$order_id', NOW())";
+
+
+
+    if (mysqli_query($db, $sql)) {
+        // Jika data berhasil disimpan, buat token pembayaran Midtrans
+        $transaction_details = [
+            'order_id' => $order_id,
+            'gross_amount' => $biaya_pendaftaran_catur, // Total biaya
+        ];
+
+        $item_details = [
+            [
+                'id' => 'catur_fee',
+                'price' => $biaya_pendaftaran_catur,
+                'quantity' => 1,
+                'name' => "Pendaftaran catur",
+            ]
+        ];
+
+        $customer_details = [
+            'first_name' => $nama,
+            'email' => $email,
+            'phone' => $whatsapp,
+        ];
+
+        $transaction = [
+            'transaction_details' => $transaction_details,
+            'item_details' => $item_details,
+            'customer_details' => $customer_details,
+        ];
+
+        try {
+            // Buat Snap Token
+            $snapToken = \Midtrans\Snap::getSnapToken($transaction);
+
+            // Redirect ke halaman pembayaran Snap
+            echo "<html><body>";
+            echo "<h3>Mohon tunggu, sedang diarahkan ke halaman pembayaran...</h3>";
+            echo "<script src='https://app.sandbox.midtrans.com/snap/snap.js' data-client-key='SB-Mid-client-uw81o6eb7cacAn_V'></script>";
+            echo "<script>snap.pay('$snapToken');</script>";
+            echo "</body></html>";
+            exit;
+        } catch (Exception $e) {
+            echo "Gagal membuat transaksi. Error: " . $e->getMessage();
+        }
+    } else {
+        echo "Error: " . $sql . "<br>" . mysqli_error($db);
+    }
 }
+
+// Tutup koneksi database
+mysqli_close($db);
 ?>
 
 <!DOCTYPE html>
@@ -22,7 +100,7 @@ if (isset($_POST['logout'])) {
 </head>
 
 <body class="bg-primary">
-<nav class="navbar navbar-expand-lg navbar-light bg-transparent">
+    <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
         <div class="container-fluid">
             <a class="navbar-brand text-light fs-3 fw-bold" href="../dashboard.php">RSC</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,9 +118,9 @@ if (isset($_POST['logout'])) {
                         <a class="nav-link text-light px-3 py-2" href="../dashboard.php#contact-section">Contact</a>
                     </li>
                 </ul>
-              
-                 <!-- Tombol Logout di pojok kanan atas -->
-                 <div class="d-flex ms-auto">
+
+                <!-- Tombol Logout di pojok kanan atas -->
+                <div class="d-flex ms-auto">
                     <form id="logout-form" action="../index.php" method="POST">
                         <input type="hidden" name="logout" value="1">
                         <button type="submit" class="btn btn-danger">Logout</button>
@@ -52,20 +130,18 @@ if (isset($_POST['logout'])) {
         </div>
     </nav>
 
-
-    <h1>Formulir Pendaftaran catur</h1>
-
-    <form>
+    <h1>Formulir Pendaftaran Catur</h1>
+    <form action="catur.php" method="POST" enctype="multipart/form-data">
         <label for="email">Email Anda:</label>
         <input type="email" id="email" name="email" required> <br>
 
         <label for="whatsapp">No Whatsapp:</label>
         <input type="text" id="whatsapp" name="whatsapp" required><br>
 
-        <label for="nama">Nama Peserta:</label>
+        <label for="nama">Nama Peserta :</label>
         <input type="text" id="nama" name="nama" required><br>
 
-        <label for="nim">Nomor Induk Mahasiswa:</label>
+        <label for="nim">Nomor Induk Mahasiswa :</label>
         <input type="text" id="nim" name="nim" required><br>
 
         <label for="prodi">Prodi:</label>
@@ -93,12 +169,10 @@ if (isset($_POST['logout'])) {
             <option value="2022">2022</option>
             <option value="2023">2023</option>
             <option value="2024">2024</option>
+
         </select> <br>
 
-        <label for="bukti_pembayaran">Bukti Pembayaran:</label>
-        <input type="file" id="bukti_pembayaran" name="bukti_pembayaran" required> <br>
-
-        <button type="submit">Kirim</button>
+        <button type="submit">Proses Pembayaran</button>
     </form>
 </body>
 
