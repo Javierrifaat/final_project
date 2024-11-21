@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $angkatan = $_POST['angkatan'];
 
     // Data pembayaran
-    $biaya_pendaftaran = 100000; // Biaya pendaftaran untuk efootball
+    $biaya_pendaftaran = 50000; // Biaya pendaftaran untuk efootball
     $order_id = uniqid("efootball_"); // ID transaksi unik
 
     // Simpan data ke database terlebih dahulu dengan status_pembayaran 'pending'
@@ -87,11 +87,42 @@ mysqli_close($db);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="layout/logo.jpg">
+    <link rel="icon" type="image/png" href="../layout/logo.jpg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="layout/style.css">
-    <title>RSC - HOMEPAGE</title>
+    <title>RSC - PENDAFTARAN EFOOTBALL</title>
+    <style>
+        body {
+ background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            margin-top: 20px;
+        }
+
+        .form-container {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+    </style>
 </head>
 
 <body class="bg-primary">
@@ -113,8 +144,6 @@ mysqli_close($db);
                         <a class="nav-link text-light px-3 py-2" href="../dashboard.php#contact-section">Contact</a>
                     </li>
                 </ul>
-
-                <!-- Tombol Logout di pojok kanan atas -->
                 <div class="d-flex ms-auto">
                     <form id="logout-form" action="../index.php" method="POST">
                         <input type="hidden" name="logout" value="1">
@@ -125,53 +154,107 @@ mysqli_close($db);
         </div>
     </nav>
 
-    <h1>Formulir Pendaftaran efootball</h1>
-    <form action="efootball.php" method="POST" enctype="multipart/form-data">
-        <label for="email">Email Anda:</label>
-        <input type="email" id="email" name="email" required> <br>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-container">
+                    <h1>Formulir Pendaftaran efootball</h1>
+                    <form action="efootball.php" method="POST" enctype="multipart/form-data">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email Anda:</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="whatsapp" class="form-label">No Whatsapp:</label>
+                                <input type="text" class="form-control" id="whatsapp" name="whatsapp" required>
+                            </div>
+                        </div>
 
-        <label for="whatsapp">No Whatsapp:</label>
-        <input type="text" id="whatsapp" name="whatsapp" required><br>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="nama" class="form-label">Nama Peserta :</label>
+                                <input type="text" class="form-control" id="nama" name="nama" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="nim" class="form-label">Nomor Induk Mahasiswa :</label>
+                                <input type="text" class="form-control" id="nim" name="nim" required>
+                            </div>
+                        </div>
 
-        <label for="nama">Nama Peserta :</label>
-        <input type="text" id="nama" name="nama" required><br>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="prodi" class="form-label">Prodi:</label>
+                                <select class="form-select" name="prodi" id="prodi">
+                                    <option value="Prodi">--Pilih Prodi--</option>
+                                    <option value="akuntansi">Akuntansi</option>
+                                    <option value="manajemen">Manajemen</option>
+                                    <option value="sistem_informasi">Sistem Informasi</option>
+                                    <option value="teknik_informatika">Teknik Informatika</option>
+                                    <option value="teknik_industri">Teknik Industri</option>
+                                    <option value="teknik_mesin">Teknik Mesin</option>
+                                    <option value="hukum">Hukum</option>
+                                    <option value="farmasi">Farmasi</option>
+                                    <option value="psikologi">Psikologi</option>
+                                    <option value="ppkn">PPKn</option>
+                                    <option value="pgsd">PGSD</option>
+                                    <option value="pai">PAI</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="fakultas" class="form-label">Asal Fakultas:</label>
+                                <input type="text" class="form-control" id="fakultas" name="fakultas" required>
+                            </div>
+                        </div>
 
-        <label for="nim">Nomor Induk Mahasiswa :</label>
-        <input type="text" id="nim" name="nim" required><br>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="angkatan" class="form-label">Tahun Angkatan:</label>
+                                <select class="form-select" name="angkatan" id="angkatan">
+                                    <option value="Angkatan">--Pilih Angkatan--</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                </select>
+                            </div>
+                        </div>    
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-container event-info">
+                    <img src="../layout/efootball.JPG" alt="Catur" class="img-fluid">
+                    <h5 class="mt-3">efootball</h5>
+                    <p>
+                        <i class="bi bi-calendar"></i> Sat, 30 Nov 2024 <br>
+                        <i class="bi bi-clock"></i> 09:00 WIB <br>
+                        <i class="bi bi-geo-alt"></i> Karawang, Indonesia
+                    </p>
+                    <hr>
+                    <div class="event-rules mb-3">
+                        <p><strong>Rules:</strong></p>
+                        <ul>
+                            <li>Perlombaan hanya untuk mahasiswa.</li>
+                            <li>Setiap peserta wajib mendaftar secara online.</li>
+                            <li>Pendaftaran ditutup pada 28 November 2024.</li>
+                        </ul>
+                    </div>
+                    <hr>
+                    <h6>Data Pembayaran</h6>
+                    <p>
+                        Jenis Perlombaan: <span class="float-end">efootball</span><br>
+                        Biaya Pendaftaran: <span class="float-end">Rp.50.0000</span><br>
+                        <hr>
+                        <strong>Total: <span class="float-end">Rp.50.0000</span></strong>
+                    </p>
+                    <button class="btn btn-primary w-100">Proses ke Pembayaran</button>
+                </div>
+            </div>
+        </form>
+        </div>
+    </div>
 
-        <label for="prodi">Prodi:</label>
-        <select name="prodi" id="prodi">
-            <option value="akuntansi">Akuntansi</option>
-            <option value="manajemen">Manajemen</option>
-            <option value="sistem_informasi">Sistem Informasi</option>
-            <option value="teknik_informatika">Teknik Informatika</option>
-            <option value="teknik_industri">Teknik Industri</option>
-            <option value="teknik_mesin">Teknik Mesin</option>
-            <option value="hukum">Hukum</option>
-            <option value="farmasi">Farmasi</option>
-            <option value="psikologi">Psikologi</option>
-            <option value="ppkn">PPKn</option>
-            <option value="pgsd">PGSD</option>
-            <option value="pai">PAI</option>
-        </select> <br>
-
-        <label for="fakultas">Asal Fakultas:</label>
-        <input type="text" id="fakultas" name="fakultas" required> <br>
-
-        <label for="angkatan">Tahun Angkatan:</label>
-        <select name="angkatan" id="angkatan">
-            <option value="2021">2021</option>
-            <option value="2022">2022</option>
-            <option value="2023">2023</option>
-            <option value="2024">2024</option>
-
-        </select> <br>
-
-        <button type="submit">Proses Pembayaran</button>
-    </form>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-x4dVbZX3EJfXb0wrbkv0OUx+Gy4IS4JgtMlEKtx79A" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-OB3BdNa1ahWOsHk9hr+hbVoJ8y+qElvc99c1nljIC9z8KnOerqqRvlp4LIG7WIEm" crossorigin="anonymous"></script>
 </body>
-
-</html>
-</body>
-
 </html>

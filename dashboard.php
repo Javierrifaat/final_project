@@ -173,7 +173,7 @@ if (isset($_GET['status'])) {
                     <div class="card-body">
                         <h5 class="card-title text-dark">Catur</h5>
                         <p class="card-text text-muted">Catur adalah seni yang mengekspresikan ilmu logika.</p>
-                        <p class="card-text text-dark"><strong>Rp25.000</strong></p>
+                        <p class="card-text text-dark"><strong>Rp30.0000</strong></p>
                         <a href="lomba/catur.php" class="btn btn-primary w-100">Daftar Sekarang</a>
                     </div>
                 </div>
@@ -199,7 +199,7 @@ if (isset($_GET['status'])) {
                     <div class="card-body">
                         <h5 class="card-title text-dark">E-Football</h5>
                         <p class="card-text text-muted">Bermain dengan semangat untuk meraih kemenangan.</p>
-                        <p class="card-text text-dark"><strong>Rp80.000</strong></p>
+                        <p class="card-text text-dark"><strong>Rp50.0000</strong></p>
                         <a href="lomba/efootball.php" class="btn btn-primary w-100">Daftar Sekarang</a>
                     </div>
                 </div>
