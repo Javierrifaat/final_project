@@ -8,12 +8,14 @@ namespace Midtrans;
 require_once dirname(__FILE__) . '/../../Midtrans.php';
 // Set Your server key
 // can find in Merchant Portal -> Settings -> Access keys
-Config::$serverKey = '<your server key>';
-Config::$clientKey = '<your client key>';
+Config::$serverKey = 'SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O';
+Config::$clientKey = 'SB-Mid-client-uw81o6eb7cacAn_V';
 
 // non-relevant function only used for demo/example purpose
 printExampleWarningMessage();
 
+Config::$appendNotifUrl = "http://localhost/fp/dashboard.php";
+Config::$overrideNotifUrl = "http://localhost/fp/dashboard.php";
 // Uncomment for production environment
 // Config::$isProduction = true;
 Config::$isSanitized = Config::$is3ds = true;

@@ -7,8 +7,8 @@ class MidtransCoreApiTest extends \PHPUnit_Framework_TestCase
 
     public function testCharge()
     {
-        Config::$appendNotifUrl = "https://example.com";
-        Config::$overrideNotifUrl = "https://example.com";
+        Config::$appendNotifUrl = "https://localhost/fp/dashboard.php";
+        Config::$overrideNotifUrl = "https://localhost/fp/dashboard.php";
         Config::$paymentIdempotencyKey = "123456";
         Config::$serverKey = "dummy";
         MT_Tests::$stubHttp = true;
@@ -19,8 +19,8 @@ class MidtransCoreApiTest extends \PHPUnit_Framework_TestCase
 
         $params = array(
             'transaction_details' => array(
-            'order_id' => "Order-111",
-            'gross_amount' => 10000,
+                'order_id' => "Order-111",
+                'gross_amount' => 10000,
             )
         );
 
@@ -39,8 +39,8 @@ class MidtransCoreApiTest extends \PHPUnit_Framework_TestCase
             $fields["POSTFIELDS"],
             '{"payment_type":"credit_card","transaction_details":{"order_id":"Order-111","gross_amount":10000}}'
         );
-        $this->assertTrue(in_array('X-Append-Notification: https://example.com', $fields["HTTPHEADER"]));
-        $this->assertTrue(in_array('X-Override-Notification: https://example.com', $fields["HTTPHEADER"]));
+        $this->assertTrue(in_array('X-Append-Notification: https://localhost/fp/dashboard.php', $fields["HTTPHEADER"]));
+        $this->assertTrue(in_array('X-Override-Notification: https://localhost/fp/dashboard.php', $fields["HTTPHEADER"]));
         $this->assertTrue(in_array('Idempotency-Key: 123456', $fields["HTTPHEADER"]));
     }
 
@@ -49,8 +49,8 @@ class MidtransCoreApiTest extends \PHPUnit_Framework_TestCase
         Config::$serverKey = 'invalid-server-key';
         $params = array(
             'transaction_details' => array(
-            'order_id' => rand(),
-            'gross_amount' => 10000,
+                'order_id' => rand(),
+                'gross_amount' => 10000,
             )
         );
 

@@ -123,7 +123,7 @@ if (isset($_POST['register'])) {
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Alamat Email</label>
-                <input type="email" class="form-control" name="email" placeholder="Masukkan email (harus @mhs.ubpkarawang.ac.id)" required />
+                <input type="email" class="form-control" name="email" placeholder="Masukkan email (Wajib Gunakan Email UBP)" required />
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Kata Sandi</label>

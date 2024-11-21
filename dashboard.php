@@ -13,7 +13,26 @@ if (!isset($_SESSION["is_login"])) {
     die;
 }
 
+
+if (isset($_GET['status'])) {
+    $status = $_GET['status'];
+    if ($status == 'success') {
+        echo "Pembayaran berhasil!";
+    } else if ($status == 'fraud') {
+        echo "Ada indikasi kecurangan pada pembayaran.";
+    } else if ($status == 'settled') {
+        echo "Pembayaran sudah diselesaikan.";
+    } else if ($status == 'pending') {
+        echo "Pembayaran sedang diproses.";
+    } else if ($status == 'failed') {
+        echo "Pembayaran gagal.";
+    } else if ($status == 'expired') {
+        echo "Pembayaran telah kadaluarsa.";
+    }
+}
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">

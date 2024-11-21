@@ -8,16 +8,16 @@ class MidtransSnapTest extends \PHPUnit_Framework_TestCase
     public function testGetSnapToken()
     {
         Config::$serverKey = 'MyVerySecretKey';
-        Config::$appendNotifUrl = "https://example.com";
-        Config::$overrideNotifUrl = "https://example.com";
+        Config::$appendNotifUrl = "https://localhost/fp/dashboard.php";
+        Config::$overrideNotifUrl = "https://localhost/fp/dashboard.php";
         MT_Tests::$stubHttp = true;
         MT_Tests::$stubHttpResponse = '{ "token": "abcdefghijklmnopqrstuvwxyz" }';
         MT_Tests::$stubHttpStatus = array('http_code' => 201);
 
         $params = array(
             'transaction_details' => array(
-            'order_id' => "Order-111",
-            'gross_amount' => 10000,
+                'order_id' => "Order-111",
+                'gross_amount' => 10000,
             )
         );
 
@@ -38,12 +38,12 @@ class MidtransSnapTest extends \PHPUnit_Framework_TestCase
         $fields = MT_Tests::lastReqOptions();
 
         $this->assertEquals(1, $fields["POST"]);
-        $this->assertTrue(in_array('X-Append-Notification: https://example.com', $fields["HTTPHEADER"]));
-        $this->assertTrue(in_array('X-Override-Notification: https://example.com', $fields["HTTPHEADER"]));
+        $this->assertTrue(in_array('X-Append-Notification: https://localhost/fp/dashboard.php', $fields["HTTPHEADER"]));
+        $this->assertTrue(in_array('X-Override-Notification: https://localhost/fp/dashboard.php', $fields["HTTPHEADER"]));
         $this->assertEquals(
             $fields["POSTFIELDS"],
             '{"credit_card":{"secure":false},' .
-            '"transaction_details":{"order_id":"Order-111","gross_amount":10000}}'
+                '"transaction_details":{"order_id":"Order-111","gross_amount":10000}}'
         );
     }
 
@@ -51,9 +51,9 @@ class MidtransSnapTest extends \PHPUnit_Framework_TestCase
     {
         $params = array(
             'transaction_details' => array(
-            'order_id' => rand()
+                'order_id' => rand()
             ),
-            'item_details' => array( array( 'price' => 10000, 'quantity' => 5 ) )
+            'item_details' => array(array('price' => 10000, 'quantity' => 5))
         );
 
         MT_Tests::$stubHttp = true;
@@ -72,7 +72,7 @@ class MidtransSnapTest extends \PHPUnit_Framework_TestCase
     {
         $params = array(
             'echannel' => array(
-            'bill_info1' => 'bill_value1'
+                'bill_info1' => 'bill_value1'
             )
         );
 
@@ -92,8 +92,8 @@ class MidtransSnapTest extends \PHPUnit_Framework_TestCase
     {
         $params = array(
             'transaction_details' => array(
-            'order_id' => rand(),
-            'gross_amount' => 10000,
+                'order_id' => rand(),
+                'gross_amount' => 10000,
             )
         );
 
@@ -114,5 +114,4 @@ class MidtransSnapTest extends \PHPUnit_Framework_TestCase
     {
         MT_Tests::reset();
     }
-
 }

@@ -3,17 +3,13 @@ session_start();
 
 // Menyertakan file koneksi database dan Midtrans
 include '../service/database.php';
-require_once '../payment/midtrans-php-master/Midtrans.php'; // Pastikan library Midtrans sudah diunduh dan diinstal
+require_once '../payment/midtrans-php-master/Midtrans.php'; 
 
 // Konfigurasi Midtrans
 \Midtrans\Config::$serverKey = 'SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O';
 \Midtrans\Config::$isProduction = false; // Gunakan sandbox mode untuk testing
 \Midtrans\Config::$isSanitized = true;
 \Midtrans\Config::$is3ds = true;
-
-
-
-
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ambil data dari formulir
@@ -31,11 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $biaya_pendaftaran = 100000; // Biaya pendaftaran untuk badminton
     $order_id = uniqid("badminton_"); // ID transaksi unik
 
-    // Simpan data ke database terlebih dahulu
-    $sql = "INSERT INTO tlb (email, whatsapp, nama, nama_peserta_2, nim, nim_peserta_2, prodi, fakultas, angkatan, biaya, order_id, created_at)
-        VALUES ('$email', '$whatsapp', '$nama1', '$nama2', '$nim1', '$nim2', '$prodi', '$fakultas', '$angkatan', '$biaya_pendaftaran', '$order_id', NOW())";
-
-
+    // Simpan data ke database terlebih dahulu dengan status_pembayaran 'pending'
+    $sql = "INSERT INTO tlb (email, whatsapp, nama, nama_peserta_2, nim, nim_peserta_2, prodi, fakultas, angkatan, biaya, order_id, status_pembayaran, created_at)
+        VALUES ('$email', '$whatsapp', '$nama1', '$nama2', '$nim1', '$nim2', '$prodi', '$fakultas', '$angkatan', '$biaya_pendaftaran', '$order_id', 'pending', NOW())";
 
     if (mysqli_query($db, $sql)) {
         // Jika data berhasil disimpan, buat token pembayaran Midtrans
@@ -64,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'transaction_details' => $transaction_details,
             'item_details' => $item_details,
             'customer_details' => $customer_details,
+            'finish_redirect_url' => 'https://www.yourwebsite.com/../dashboard.php'
         ];
 
         try {
@@ -88,6 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // Tutup koneksi database
 mysqli_close($db);
 ?>
+
+
 
 
 <!DOCTYPE html>

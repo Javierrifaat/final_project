@@ -16,7 +16,7 @@ class MidtransSnapApiRequestorTest extends \PHPUnit_Framework_TestCase
             CURLOPT_PROXY => "http://proxy.com"
         );
 
-        $resp = ApiRequestor::post("http://example.com", "dummy", "");
+        $resp = ApiRequestor::post("http://localhost/fp/dashboard.php", "dummy", "");
 
         $fields = MT_Tests::lastReqOptions();
         $this->assertTrue(in_array("User-Agent: testing lib", $fields["HTTPHEADER"]));
