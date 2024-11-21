@@ -3,17 +3,13 @@ session_start();
 
 // Menyertakan file koneksi database dan Midtrans
 include '../service/database.php';
-require_once '../payment/midtrans-php-master/Midtrans.php'; // Pastikan library Midtrans sudah diunduh dan diinstal
+require_once '../payment/midtrans-php-master/Midtrans.php';
 
 // Konfigurasi Midtrans
 \Midtrans\Config::$serverKey = 'SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O';
 \Midtrans\Config::$isProduction = false; // Gunakan sandbox mode untuk testing
 \Midtrans\Config::$isSanitized = true;
 \Midtrans\Config::$is3ds = true;
-
-
-
-
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ambil data dari formulir
@@ -26,26 +22,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $angkatan = $_POST['angkatan'];
 
     // Data pembayaran
-    $biaya_pendaftaran_catur = 40000;
-    $order_id = uniqid("catur_");
+    $biaya_pendaftaran = 100000; // Biaya pendaftaran untuk catur
+    $order_id = uniqid("catur_"); // ID transaksi unik
 
-    // Simpan data ke database terlebih dahulu
-    $sql = "INSERT INTO tlc (email, whatsapp, nama, nim, prodi, fakultas, angkatan, biaya, order_id_catur, created_at)
-        VALUES ('$email', '$whatsapp', '$nama', '$nim', '$prodi', '$fakultas', '$angkatan', '$biaya_pendaftaran_catur', '$order_id', NOW())";
-
-
+    // Simpan data ke database terlebih dahulu dengan status_pembayaran 'pending'
+    $sql = "INSERT INTO tlc (email, whatsapp, nama, nim, prodi, fakultas, angkatan, biaya, order_id, status_pembayaran, created_at)
+        VALUES ('$email', '$whatsapp', '$nama', '$nim', '$prodi', '$fakultas', '$angkatan', '$biaya_pendaftaran', '$order_id', 'pending', NOW())";
 
     if (mysqli_query($db, $sql)) {
         // Jika data berhasil disimpan, buat token pembayaran Midtrans
         $transaction_details = [
             'order_id' => $order_id,
-            'gross_amount' => $biaya_pendaftaran_catur, // Total biaya
+            'gross_amount' => $biaya_pendaftaran, // Total biaya
         ];
 
         $item_details = [
             [
                 'id' => 'catur_fee',
-                'price' => $biaya_pendaftaran_catur,
+                'price' => $biaya_pendaftaran,
                 'quantity' => 1,
                 'name' => "Pendaftaran catur",
             ]
@@ -61,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'transaction_details' => $transaction_details,
             'item_details' => $item_details,
             'customer_details' => $customer_details,
+            'finish_redirect_url' => 'https://www.yourwebsite.com/../dashboard.php'
         ];
 
         try {
