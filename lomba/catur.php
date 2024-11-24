@@ -93,8 +93,10 @@ mysqli_close($db);
     <link rel="stylesheet" href="layout/style.css">
     <title>RSC - PENDAFTARAN CATUR</title>
     <style>
-        body {
+    body {
             background-color: #f8f9fa;
+        }
+
         .container {
             max-width: 1000px;
             margin: auto;

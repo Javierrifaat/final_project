@@ -6,23 +6,24 @@
 namespace Midtrans;
 
 require_once dirname(__FILE__) . '/../../Midtrans.php';
-// Set Your server key
+// Set SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O
 // can find in Merchant Portal -> Settings -> Access keys
-Config::$clientKey = '<your client key>';
+Config::$clientKey = '<SB-Mid-client-uw81o6eb7cacAn_V>';
 
 // non-relevant function only used for demo/example purpose
 printExampleWarningMessage();
 
-function printExampleWarningMessage() {
-    if (strpos(Config::$clientKey, 'your ') != false ) {
+function printExampleWarningMessage()
+{
+    if (strpos(Config::$clientKey, 'your ') != false) {
         echo "<code>";
-        echo "<h4>Please set your client key from sandbox</h4>";
+        echo "<h4>Please set SB-Mid-client-uw81o6eb7cacAn_V from sandbox</h4>";
         echo "In file: " . __FILE__;
         echo "<br>";
         echo "<br>";
-        echo htmlspecialchars('Config::$clientKey = \'<your client key>\';');
+        echo htmlspecialchars('Config::$clientKey = \'<SB-Mid-client-uw81o6eb7cacAn_V>\';');
         die();
-    } 
+    }
 }
 ?>
 <html>
@@ -33,7 +34,7 @@ function printExampleWarningMessage() {
 </head>
 
 <body>
-    <script id="midtrans-script" type="text/javascript" src="https://api.midtrans.com/v2/assets/js/midtrans-new-3ds.min.js" data-environment="sandbox" data-client-key="<?php echo Config::$clientKey;?>"></script>
+    <script id="midtrans-script" type="text/javascript" src="https://api.midtrans.com/v2/assets/js/midtrans-new-3ds.min.js" data-environment="sandbox" data-client-key="<?php echo Config::$clientKey; ?>"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.12/featherlight.min.js"></script>
 
@@ -92,7 +93,7 @@ function printExampleWarningMessage() {
 
     <!-- Javascript for token generation -->
     <script type="text/javascript">
-        $(function () {
+        $(function() {
             // open the console log to check the flow
             // 3ds new flow:
             // 1. get token_id
@@ -101,37 +102,37 @@ function printExampleWarningMessage() {
             // 4. open redirect_url
 
             var options = {
-                performAuthentication: function(redirect_url){
+                performAuthentication: function(redirect_url) {
                     openDialog(redirect_url);
                 },
-                onSuccess: function(response){
+                onSuccess: function(response) {
                     console.log('success');
-                    console.log('response:',response);
+                    console.log('response:', response);
                     closeDialog();
                 },
-                onFailure: function(response){
+                onFailure: function(response) {
                     console.log('fail');
-                    console.log('response:',response);
+                    console.log('response:', response);
                     closeDialog();
                     alert(response.status_message);
                     $('button').removeAttr("disabled");
                 },
-                onPending: function(response){
+                onPending: function(response) {
                     console.log('pending');
-                    console.log('response:',response);
+                    console.log('response:', response);
                     closeDialog();
                 }
             };
 
             function openDialog(url) {
                 $.featherlight({
-                iframe: url, 
-                iframeMaxWidth: '80%', 
-                iframeWidth: 700, 
-                iframeHeight: 500,
-                closeOnClick: false,
-                closeOnEsc: false,
-                closeIcon:''
+                    iframe: url,
+                    iframeMaxWidth: '80%',
+                    iframeWidth: 700,
+                    iframeHeight: 500,
+                    closeOnClick: false,
+                    closeOnEsc: false,
+                    closeIcon: ''
                 });
             }
 
@@ -139,14 +140,14 @@ function printExampleWarningMessage() {
                 $.featherlight.close();
             }
 
-            $(".submit-button").click(function (event) {
+            $(".submit-button").click(function(event) {
                 var card = {
                     "card_number": $(".card-number").val(),
                     "card_exp_month": $(".card-expiry-month").val(),
                     "card_exp_year": $(".card-expiry-year").val(),
                     "card_cvv": $(".card-cvv").val()
                 };
-                
+
                 event.preventDefault();
                 $(this).attr("disabled", "disabled");
 
@@ -174,18 +175,18 @@ function printExampleWarningMessage() {
                         type: 'POST',
                         url: 'checkout-process.php',
                         data: $("#token_id, #save_cc, #secure").serialize(),
-                        success: function(response){
+                        success: function(response) {
                             console.log('3. response charge from backend:', response);
-                            if (response.redirect_url){
+                            if (response.redirect_url) {
                                 console.log('4. open redirect_url');
                                 MidtransNew3ds.authenticate(response.redirect_url, options);
                             }
                         },
-                        error: function(xhr, status, error){
+                        error: function(xhr, status, error) {
                             console.error(xhr);
                         }
                     });
-                    
+
                 },
                 onFailure: function(response) {
                     // Fail to get card token_id, implement as you wish here

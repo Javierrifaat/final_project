@@ -6,9 +6,9 @@
 namespace Midtrans;
 
 require_once dirname(__FILE__) . '/../../Midtrans.php';
-// Set Your server key
+// Set SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O
 // can find in Merchant Portal -> Settings -> Access keys
-Config::$serverKey = '<your server key>';
+Config::$serverKey = '<SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O>';
 
 // non-relevant function only used for demo/example purpose
 printExampleWarningMessage();
@@ -45,7 +45,7 @@ $item2_details = array(
 );
 
 // Optional
-$item_details = array ($item1_details, $item2_details);
+$item_details = array($item1_details, $item2_details);
 
 // Optional
 $billing_address = array(
@@ -89,22 +89,22 @@ $params = array(
 try {
     // Get Snap Payment Page URL
     $paymentUrl = Snap::createTransaction($params)->redirect_url;
-  
+
     // Redirect to Snap Payment Page
     header('Location: ' . $paymentUrl);
-}
-catch (\Exception $e) {
+} catch (\Exception $e) {
     echo $e->getMessage();
 }
 
-function printExampleWarningMessage() {
-    if (strpos(Config::$serverKey, 'your ') != false ) {
+function printExampleWarningMessage()
+{
+    if (strpos(Config::$serverKey, 'your ') != false) {
         echo "<code>";
-        echo "<h4>Please set your server key from sandbox</h4>";
+        echo "<h4>Please set SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O from sandbox</h4>";
         echo "In file: " . __FILE__;
         echo "<br>";
         echo "<br>";
-        echo htmlspecialchars('Config::$serverKey = \'<your server key>\';');
+        echo htmlspecialchars('Config::$serverKey = \'<SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O>\';');
         die();
-    } 
+    }
 }

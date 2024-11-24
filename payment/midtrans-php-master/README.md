@@ -1,16 +1,17 @@
-Midtrans-PHP
-===============
+# Midtrans-PHP
 
 [![PHP version](https://badge.fury.io/ph/midtrans%2Fmidtrans-php.svg)](https://badge.fury.io/ph/midtrans%2Fmidtrans-php)
 [![Latest Stable Version](https://poser.pugx.org/midtrans/midtrans-php/v/stable)](https://packagist.org/packages/midtrans/midtrans-php)
 [![Monthly Downloads](https://poser.pugx.org/midtrans/midtrans-php/d/monthly)](https://packagist.org/packages/midtrans/midtrans-php)
 [![Total Downloads](https://poser.pugx.org/midtrans/midtrans-php/downloads)](https://packagist.org/packages/midtrans/midtrans-php)
+
 <!-- [![Build Status](https://travis-ci.org/midtrans/midtrans-php.svg)](https://travis-ci.org/midtrans/midtrans-php) -->
 
 [Midtrans](https://midtrans.com) :heart: PHP!
 
 This is the Official PHP wrapper/library for Midtrans Payment API, that is compatible with Composer. Visit [https://midtrans.com](https://midtrans.com) for more information about the product and see documentation at [http://docs.midtrans.com](https://docs.midtrans.com) for more technical details.
 Starting version 2.6, this library now supports Snap-bi. You can go to this [docs](https://docs.midtrans.com/reference/core-api-snap-open-api-overview) to learn more about Snap-bi.
+
 ## 1. Installation
 
 ### 1.a Composer Installation
@@ -27,9 +28,9 @@ add this require line to your `composer.json` file:
 
 ```json
 {
-    "require": {
-        "midtrans/midtrans-php": "2.*"
-    }
+  "require": {
+    "midtrans/midtrans-php": "2.*"
+  }
 }
 ```
 
@@ -57,7 +58,7 @@ require_once dirname(__FILE__) . '/pathofproject/Midtrans.php';
 
 ```php
 // Set your Merchant Server Key
-\Midtrans\Config::$serverKey = '<your server key>';
+\Midtrans\Config::$serverKey = '<SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O>';
 // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
 \Midtrans\Config::$isProduction = false;
 // Set sanitization on (default)
@@ -84,8 +85,9 @@ Config::$overrideNotifUrl = "https://example.com/test1";
 > Both header can only receive up to maximum of **3 urls**.
 
 #### Idempotency-Key
-You can opt to add idempotency key on charge transaction. It can be achieved by adding additional HTTP headers into charge request. 
-Is a unique value that is put on header on API request. Midtrans API accept Idempotency-Key on header to safely handle retry request 
+
+You can opt to add idempotency key on charge transaction. It can be achieved by adding additional HTTP headers into charge request.
+Is a unique value that is put on header on API request. Midtrans API accept Idempotency-Key on header to safely handle retry request
 without performing the same operation twice. This is helpful for cases where merchant didn't receive the response because of network issue or other unexpected error.
 
 ```php
@@ -97,6 +99,7 @@ Config::$paymentIdempotencyKey = "Unique-ID";
 ### 2.2 Choose Product/Method
 
 We have [3 different products](https://docs.midtrans.com/en/welcome/index.html) of payment that you can use:
+
 - [Snap](#22a-snap) - Customizable payment popup will appear on **your web/app** (no redirection). [doc ref](https://snap-docs.midtrans.com/)
 - [Snap Redirect](#22b-snap-redirect) - Customer need to be redirected to payment url **hosted by midtrans**. [doc ref](https://snap-docs.midtrans.com/)
 - [Core API (VT-Direct)](#22c-core-api-vt-direct) - Basic backend implementation, you can customize the frontend embedded on **your web/app** as you like (no redirection). [doc ref](https://api-docs.midtrans.com/)
@@ -126,26 +129,35 @@ $snapToken = \Midtrans\Snap::getSnapToken($params);
 <html>
   <body>
     <button id="pay-button">Pay!</button>
-    <pre><div id="result-json">JSON result will appear here after payment:<br></div></pre> 
+    <pre><div id="result-json">JSON result will appear here after payment:<br></div></pre>
 
-<!-- TODO: Remove ".sandbox" from script src URL for production environment. Also input your client key in "data-client-key" -->
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="<Set your ClientKey here>"></script>
+    <!-- TODO: Remove ".sandbox" from script src URL for production environment. Also input SB-Mid-client-uw81o6eb7cacAn_V in "data-client-key" -->
+    <script
+      src="https://app.sandbox.midtrans.com/snap/snap.js"
+      data-client-key="<Set your ClientKey here>"
+    ></script>
     <script type="text/javascript">
-      document.getElementById('pay-button').onclick = function(){
+      document.getElementById("pay-button").onclick = function () {
         // SnapToken acquired from previous step
-        snap.pay('<?=$snapToken?>', {
+        snap.pay("<?=$snapToken?>", {
           // Optional
-          onSuccess: function(result){
-            /* You may add your own js here, this is just example */ document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+          onSuccess: function (result) {
+            /* You may add your own js here, this is just example */ document.getElementById(
+              "result-json"
+            ).innerHTML += JSON.stringify(result, null, 2);
           },
           // Optional
-          onPending: function(result){
-            /* You may add your own js here, this is just example */ document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+          onPending: function (result) {
+            /* You may add your own js here, this is just example */ document.getElementById(
+              "result-json"
+            ).innerHTML += JSON.stringify(result, null, 2);
           },
           // Optional
-          onError: function(result){
-            /* You may add your own js here, this is just example */ document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
-          }
+          onError: function (result) {
+            /* You may add your own js here, this is just example */ document.getElementById(
+              "result-json"
+            ).innerHTML += JSON.stringify(result, null, 2);
+          },
         });
       };
     </script>
@@ -154,6 +166,7 @@ $snapToken = \Midtrans\Snap::getSnapToken($params);
 ```
 
 #### Implement Notification Handler
+
 [Refer to this section](#23-handle-http-notification)
 
 ### 2.2.b Snap Redirect
@@ -173,7 +186,7 @@ $params = array(
 try {
   // Get Snap Payment Page URL
   $paymentUrl = \Midtrans\Snap::createTransaction($params)->redirect_url;
-  
+
   // Redirect to Snap Payment Page
   header('Location: ' . $paymentUrl);
 }
@@ -181,7 +194,9 @@ catch (Exception $e) {
   echo $e->getMessage();
 }
 ```
+
 #### Implement Notification Handler
+
 [Refer to this section](#23-handle-http-notification)
 
 ### 2.2.c Core API (VT-Direct)
@@ -191,7 +206,7 @@ You can see some Core API examples [here](examples/core-api).
 #### Set Client Key
 
 ```javascript
-MidtransNew3ds.clientKey = "<your client key>";
+MidtransNew3ds.clientKey = "<SB-Mid-client-uw81o6eb7cacAn_V>";
 ```
 
 #### Checkout Page
@@ -292,12 +307,12 @@ $transaction_data = array(
 $response = \Midtrans\CoreApi::charge($transaction_data);
 ```
 
-
 ##### 6. Credit Card 3DS Authentication
 
 The credit card charge result may contains `redirect_url` for 3DS authentication. 3DS Authentication should be handled on Frontend please refer to [API docs](https://api-docs.midtrans.com/#card-features-3d-secure)
 
 For full example on Credit Card 3DS transaction refer to:
+
 - [Core API examples](/examples/core-api/)
 
 ##### 7. Handle Transaction Status
@@ -347,13 +362,14 @@ else {
     echo "</pre>";
 }
 ```
-#### 8. Implement Notification Handler
-[Refer to this section](#23-handle-http-notification)
 
+#### 8. Implement Notification Handler
+
+[Refer to this section](#23-handle-http-notification)
 
 ### 2.3 Handle HTTP Notification
 
-Create separated web endpoint (notification url) to receive HTTP POST notification callback/webhook. 
+Create separated web endpoint (notification url) to receive HTTP POST notification callback/webhook.
 HTTP notification will be sent whenever transaction status is changed.
 Example also available [here](examples/notification-handler.php)
 
@@ -396,6 +412,7 @@ var_dump($status);
 ```
 
 #### Approve Transaction
+
 If transaction fraud_status == [CHALLENGE](https://support.midtrans.com/hc/en-us/articles/202710750-What-does-CHALLENGE-status-mean-What-should-I-do-if-there-is-a-CHALLENGE-transaction-), you can approve the transaction from Merchant Dashboard, or API :
 
 ```php
@@ -404,22 +421,28 @@ var_dump($approve);
 ```
 
 #### Cancel Transaction
+
 You can Cancel transaction with `fraud_status == CHALLENGE`, or credit card transaction with `transaction_status == CAPTURE` (before it become SETTLEMENT)
+
 ```php
 $cancel = \Midtrans\Transaction::cancel($orderId);
 var_dump($cancel);
 ```
 
 #### Expire Transaction
+
 You can Expire transaction with `transaction_status == PENDING` (before it become SETTLEMENT or EXPIRE)
+
 ```php
 $cancel = \Midtrans\Transaction::cancel($orderId);
 var_dump($cancel);
 ```
 
 #### Refund Transaction
+
 Refund a transaction (not all payment channel allow refund via API)
 You can Refund transaction with `transaction_status == settlement`
+
 ```php
 $params = array(
     'refund_key' => 'order1-ref1',
@@ -431,8 +454,10 @@ var_dump($refund);
 ```
 
 #### Direct Refund Transaction
+
 Refund a transaction via Direct Refund API
 You can Refund transaction with `transaction_status == settlement`
+
 ```php
 $params = array(
     'refund_key' => 'order1-ref1',
@@ -442,7 +467,9 @@ $params = array(
 $direct_refund = \Midtrans\Transaction::refundDirect($orderId, $params);
 var_dump($direct_refund);
 ```
-## 3. Snap-BI (*NEW FEATURE starting v2.6.0)
+
+## 3. Snap-BI (\*NEW FEATURE starting v2.6.0)
+
 Standar Nasional Open API Pembayaran, or in short SNAP, is a national payment open API standard published by Bank Indonesia. To learn more you can read this [docs](https://docs.midtrans.com/reference/core-api-snap-open-api-overview)
 
 ### 3.1 General Settings
@@ -470,10 +497,11 @@ Standar Nasional Open API Pembayaran, or in short SNAP, is a national payment op
 ### 3.2 Create Payment
 
 #### 3.2.1 Direct Debit (Gopay, Dana, Shopeepay)
+
 Refer to this [docs](https://docs.midtrans.com/reference/direct-debit-api-gopay) for more detailed information about creating payment using direct debit.
 
 ```php
-   
+
 date_default_timezone_set('Asia/Jakarta');
 $time_stamp = date("c");
 $date = new DateTime($time_stamp);
@@ -562,8 +590,11 @@ $snapBiResponse = SnapBi::directDebit()
     ->createPayment($external_id);
 
 ```
+
 #### 3.2.2 VA (Bank Transfer)
+
 Refer to this [docs](https://docs.midtrans.com/reference/virtual-account-api-bank-transfer) for more detailed information about VA/Bank Transfer.
+
 ```php
 $external_id = "uzi-order-testing" . uniqid();
 $customerVaNo = "6280123456";
@@ -663,8 +694,11 @@ $snapBiResponse = SnapBi::va()
     ->withBody($vaParams)
     ->createPayment($external_id);
 ```
-#### 3.2.3 Qris 
+
+#### 3.2.3 Qris
+
 Refer to this [docs](https://docs.midtrans.com/reference/mpm-api-qris) for more detailed information about Qris.
+
 ```php
 $external_id = "uzi-order-testing" . uniqid();
 $merchant_id = "M001234";
@@ -712,7 +746,9 @@ $snapBiResponse = SnapBi::qris()
 ```
 
 ### 3.4 Get Transaction Status
+
 Refer to this [docs](https://docs.midtrans.com/reference/get-transaction-status-api) for more detailed information about getting the transaction status.
+
 ```php
 $merchant_id = "M001234";
 $external_id = "uzi-order-testing" . uniqid();
@@ -759,7 +795,7 @@ $snapBiResponse = SnapBi::directDebit()
 $snapBiResponse = SnapBi::directDebit()
     ->withBody($statusByReference)
     ->getStatus($external_id);
-    
+
 /**
  * Example code for VA (Bank Transfer) getStatus
  */
@@ -767,17 +803,19 @@ $snapBiResponse = SnapBi::va()
     ->withBody($vaStatusBody)
     ->getStatus($external_id);
     /**
- * 
+ *
  * Example code for Qris getStatus
  */
 $snapBiResponse = SnapBi::qris()
     ->withBody($qrisStatusBody)
-    ->getStatus($external_id);      
+    ->getStatus($external_id);
 
 ```
 
 ### 3.5 Cancel Transaction
+
 Refer to this [docs](https://docs.midtrans.com/reference/cancel-api) for more detailed information about cancelling the payment.
+
 ```php
 $merchant_id = "M001234";
 $external_id = "uzi-order-testing" . uniqid();
@@ -785,7 +823,7 @@ $external_id = "uzi-order-testing" . uniqid();
 $directDebitCancelByReferenceBody = array(
     "originalReferenceNo" => "A120240902104935GBqSQK0gtQID"
 );
-        
+
 $directDebitCancelByExternalIdBody = array(
     "originalExternalId" => "uzi-order-testing66d5983eabc71"
 );
@@ -835,6 +873,7 @@ $snapBiResponse = SnapBi::qris()
 ```
 
 ### 3.6 Refund Transaction
+
 Refer to this [docs](https://docs.midtrans.com/reference/refund-api) for more detailed information about refunding the payment.
 
 ```php
@@ -859,7 +898,7 @@ $directDebitRefundByReferenceBody = array(
         "value" => "100.00",
         "currency" => "IDR"
     ));
-    
+
 $qrisRefundBody = array(
     "merchantId" => $merchant_id,
     "originalPartnerReferenceNo" => "uzi-order-testing66e01a9b8c6bf",
@@ -887,7 +926,7 @@ $snapBiResponse = SnapBi::directDebit()
 $snapBiResponse = SnapBi::directDebit()
     ->withBody($directDebitRefundByReferenceBody)
     ->refund($external_id);
-    
+
     /**
  * Example code for refund using Qris
  */
@@ -949,10 +988,12 @@ $snapBiResponse = SnapBi::va()
 ```
 
 ### 3.9 Payment Notification
+
 To implement Snap-Bi Payment Notification you can refer to this [docs](https://docs.midtrans.com/reference/payment-notification-api)
 To verify the webhook notification that you recieve you can use this method below
+
 ```php
- 
+
 //the request body/ payload sent by the webhook
  $payload = json_decode(
  {
@@ -992,13 +1033,17 @@ $isVerified = SnapBi::notification()
 ```
 
 ## Unit Test
+
 ### Integration Test (sandbox real transactions)
+
 Please change server key and client key on `phpunit.xml` to your own.
 
 ### All Test
+
 `vendor/bin/phpunit`
 
 ### Specific Test
+
 `vendor/bin/phpunit tests/integration/CoreApiIntegrationTest.php`
 
 ## Contributing
@@ -1007,6 +1052,6 @@ Please change server key and client key on `phpunit.xml` to your own.
 
 There are several guides that must be taken care of when you develop new plugins.
 
-1. __Handling currency other than IDR.__ Midtrans `v1` and `v2` currently accepts payments in Indonesian Rupiah only. As a corrolary, there is a validation on the server to check whether the item prices are in integer or not. As much as you are tempted to round-off the price, DO NOT do that! Always prepare when your system uses currencies other than IDR, convert them to IDR accordingly, and only round the price AFTER that.
+1. **Handling currency other than IDR.** Midtrans `v1` and `v2` currently accepts payments in Indonesian Rupiah only. As a corrolary, there is a validation on the server to check whether the item prices are in integer or not. As much as you are tempted to round-off the price, DO NOT do that! Always prepare when your system uses currencies other than IDR, convert them to IDR accordingly, and only round the price AFTER that.
 
-2. Consider using the __auto-sanitization__ feature.
+2. Consider using the **auto-sanitization** feature.

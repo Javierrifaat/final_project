@@ -7,7 +7,7 @@ namespace Midtrans;
 
 require_once dirname(__FILE__) . '/../../Midtrans.php';
 
-Config::$serverKey = '<your server key>';
+Config::$serverKey = '<SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O>';
 // Uncomment for append and override notification URL
 Config::$appendNotifUrl = "https://localhost/fp/dashboard.php";
 Config::$overrideNotifUrl = "https://localhost/fp/dashboard.php";
@@ -42,7 +42,8 @@ $items = array(
         'price'    => 50000,
         'quantity' => 2,
         'name'     => 'Nike N90'
-    ));
+    )
+);
 
 // Populate customer's billing address
 $billing_address = array(
@@ -53,7 +54,7 @@ $billing_address = array(
     'postal_code'  => "51161",
     'phone'        => "081322311801",
     'country_code' => 'IDN'
-  );
+);
 
 // Populate customer's shipping address
 $shipping_address = array(
@@ -64,7 +65,7 @@ $shipping_address = array(
     'postal_code'  => "51162",
     'phone'        => "081322311801",
     'country_code' => 'IDN'
-  );
+);
 
 // Populate customer's info
 $customer_details = array(
@@ -74,7 +75,7 @@ $customer_details = array(
     'phone'            => "081322311801",
     'billing_address'  => $billing_address,
     'shipping_address' => $shipping_address
-  );
+);
 
 // Token ID from checkout page
 $token_id = $_POST['token_id'];
@@ -93,7 +94,7 @@ $transaction_data = array(
     'transaction_details' => $transaction_details,
     'item_details'        => $items,
     'customer_details'    => $customer_details
-  );
+);
 
 try {
     $response = CoreApi::charge($transaction_data);
@@ -103,15 +104,15 @@ try {
     echo $e->getMessage();
 }
 
-function printExampleWarningMessage() {
-    if (strpos(Config::$serverKey, 'your ') != false ) {
+function printExampleWarningMessage()
+{
+    if (strpos(Config::$serverKey, 'your ') != false) {
         echo "<code>";
-        echo "<h4>Please set your server key from sandbox</h4>";
+        echo "<h4>Please set SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O from sandbox</h4>";
         echo "In file: " . __FILE__;
         echo "<br>";
         echo "<br>";
-        echo htmlspecialchars('Config::$serverKey = \'<your server key>\';');
+        echo htmlspecialchars('Config::$serverKey = \'<SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O>\';');
         die();
-    } 
+    }
 }
-

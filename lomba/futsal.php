@@ -1,11 +1,105 @@
 <?php
 session_start();
+include '../service/database.php';
+require_once '../payment/midtrans-php-master/Midtrans.php';
+
+// Konfigurasi Midtrans
+\Midtrans\Config::$serverKey = 'SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O';
+\Midtrans\Config::$isProduction = false; // Gunakan sandbox mode untuk testing
+\Midtrans\Config::$isSanitized = true;
+\Midtrans\Config::$is3ds = true;
+
 if (isset($_POST['logout'])) {
     session_unset();
     session_destroy();
     header('Location: ../index.php'); // Pastikan ini mengarah ke index.php di luar folder lomba
     exit(); // Pastikan untuk menghentikan eksekusi skrip setelah pengalihan
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $db->real_escape_string($_POST['email']);
+    $nama_team = $db->real_escape_string($_POST['nama_team']);
+    $created_at = date('Y-m-d H:i:s');
+    $order_id = uniqid(); // ID unik untuk Midtrans
+
+    // data pembayara
+    $biaya_pendaftaran = 120000; // Biaya pendaftaran untuk futsal
+    $order_id = uniqid("futsal_"); // ID transaksi unik
+
+    // Proses upload file
+    $uploaded_files = [];
+    $target_dir = "../uploads/";
+    foreach ($_FILES['bukti']['name'] as $key => $name) {
+        $tmp_name = $_FILES['bukti']['tmp_name'][$key];
+        $file_size = $_FILES['bukti']['size'][$key];
+        $file_type = pathinfo($name, PATHINFO_EXTENSION);
+        
+        if ($file_size <= 10485760 && in_array($file_type, ['pdf', 'jpg', 'jpeg', 'png'])) {
+            $new_name = uniqid() . "_" . basename($name);
+            $target_file = $target_dir . $new_name;
+            if (move_uploaded_file($tmp_name, $target_file)) {
+                $uploaded_files[] = $target_file;
+            }
+        }
+    }
+
+    // Simpan path file ke database (gabungkan menjadi string jika lebih dari satu)
+    $bukti_files = implode(',', $uploaded_files);
+
+    // Masukkan data ke tabel
+    $sql = "INSERT INTO tlf (email, nama_team, bukti_files, biaya, order_id, status_pembayaran, created_at)
+            VALUES ('$email', '$nama_team', '$bukti_files', '$biaya_pendaftaran', '$order_id', 'pending', '$created_at')";
+
+if (mysqli_query($db, $sql)) {
+    // Jika data berhasil disimpan, buat token pembayaran Midtrans
+    $transaction_details = [
+        'order_id' => $order_id,
+        'gross_amount' => $biaya_pendaftaran, // Total biaya
+    ];
+
+    $item_details = [
+        [
+            'id' => 'futsal_fee',
+            'price' => $biaya_pendaftaran,
+            'quantity' => 1,
+            'name' => "Pendaftaran futsal",
+        ]
+    ];
+
+    $customer_details = [
+        'first_name' => $nama_team,
+        'email' => $email,
+        // 'phone' => $whatsapp,
+    ];
+
+    $transaction = [
+        'transaction_details' => $transaction_details,
+        'item_details' => $item_details,
+        'customer_details' => $customer_details,
+        'finish_redirect_url' => 'https://www.yourwebsite.com/../dashboard.php'
+    ];
+
+    try {
+        // Buat Snap Token
+        $snapToken = \Midtrans\Snap::getSnapToken($transaction);
+
+        // Redirect ke halaman pembayaran Snap
+        echo "<html><body>";
+        echo "<h3>Mohon tunggu, sedang diarahkan ke halaman pembayaran...</h3>";
+        echo "<script src='https://app.sandbox.midtrans.com/snap/snap.js' data-client-key='SB-Mid-client-uw81o6eb7cacAn_V'></script>";
+        echo "<script>snap.pay('$snapToken');</script>";
+        echo "</body></html>";
+        exit;
+    } catch (Exception $e) {
+        echo "Gagal membuat transaksi. Error: " . $e->getMessage();
+    }
+} else {
+    echo "Error: " . $sql . "<br>" . mysqli_error($db);
+}
+}        
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -54,21 +148,19 @@ if (isset($_POST['logout'])) {
 
     <h1>Formulir Pendaftaran futsal</h1>
 
-<form>
-  <label for="email">Email:</label>
-  <input type="email" id="email" name="email" required> <br>
+<form action="futsal.php" method="POST" enctype="multipart/form-data">
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required> <br>
 
-  <label for="nama_team">Nama Tim:</label>
-  <input type="text" id="nama_team" name="nama_team" required> <br>
+    <label for="nama_team">Nama Tim:</label>
+    <input type="text" id="nama_team" name="nama_team" required> <br>
 
-  <label for="bukti">Bukti Kartu Tanda Mahasiswa (KTM)/SIPT Bukti Mahasiswa Aktif & FOTO 4x6 (Semua Anggota Team):</label> <br>
-  <input type="file" id="bukti" name="bukti[]" multiple accept=".pdf,.jpg,.jpeg,.png" required>
-  <p>Upload maksimal 10 file yang didukung: PDF atau image. Maks 10 MB per file.</p> <br>
+    <label for="bukti">Bukti Kartu Tanda Mahasiswa (KTM)/SIPT Bukti Mahasiswa Aktif & FOTO 4x6 (Semua Anggota Team):</label> <br>
+    <input type="file" id="bukti" name="bukti[]" multiple accept=".pdf,.jpg,.jpeg,.png" required>
+    <p>Upload maksimal 10 file yang didukung: PDF atau image. Maks 10 MB per file.</p> <br>
 
-  <p>Contoh Pengumpulan Bukti KTM & Foto Anggota Team (Dalam Satu File):</p>
-  <img src="../layout/contoh_tim.jpg" alt="Contoh Bukti"><br>
-
-  <button type="submit">Kirim</button>
+    <button type="submit">Kirim</button>
 </form>
+
 
 </html>

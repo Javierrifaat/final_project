@@ -3,7 +3,7 @@ session_start();
 
 // Menyertakan file koneksi database dan Midtrans
 include '../service/database.php';
-require_once '../payment/midtrans-php-master/Midtrans.php'; 
+require_once '../payment/midtrans-php-master/Midtrans.php';
 
 // Konfigurasi Midtrans
 \Midtrans\Config::$serverKey = 'SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O';
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $order_id = uniqid("badminton_"); // ID transaksi unik
 
     // Simpan data ke database terlebih dahulu dengan status_pembayaran 'pending'
-    $sql = "INSERT INTO tlb (email, whatsapp, nama, nama_peserta_2, nim, nim_peserta_2, prodi, fakultas, angkatan, biaya, order_id, status_pembayaran, created_at)
+    $sql = "INSERT INTO tlb (email, whatsapp, nama1, nama2, nim1, nim2, prodi, fakultas, angkatan, biaya, order_id, status_pembayaran, created_at)
         VALUES ('$email', '$whatsapp', '$nama1', '$nama2', '$nim1', '$nim2', '$prodi', '$fakultas', '$angkatan', '$biaya_pendaftaran', '$order_id', 'pending', NOW())";
 
     if (mysqli_query($db, $sql)) {
@@ -84,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 mysqli_close($db);
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -99,24 +100,29 @@ mysqli_close($db);
         body {
             background-color: #f8f9fa;
         }
+
         .container {
             max-width: 1000px;
             margin: auto;
             margin-top: 20px;
         }
+
         .form-container {
             background: #fff;
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         .form-label {
             font-weight: bold;
         }
+
         .btn-primary {
             background-color: #007bff;
             border-color: #007bff;
         }
+
         .btn-primary:hover {
             background-color: #0056b3;
             border-color: #004085;
@@ -171,11 +177,11 @@ mysqli_close($db);
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="nama1" class="form-label">Nama Peserta 1:</label>
+                                <label for="nama1" class="form-label">nama Peserta 1:</label>
                                 <input type="text" class="form-control" id="nama1" name="nama1" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="nama2" class="form-label">Nama Peserta 2:</label>
+                                <label for="nama2" class="form-label">nama Peserta 2:</label>
                                 <input type="text" class="form-control" id="nama2" name="nama2" required>
                             </div>
                         </div>
@@ -223,7 +229,7 @@ mysqli_close($db);
                                 </select>
                             </div>
                         </div>
-                    
+
                 </div>
             </div>
             <div class="col-md-4">
@@ -254,7 +260,7 @@ mysqli_close($db);
                     </p>
                     <button class="btn btn-primary w-100">Proses ke Pembayaran</button>
                 </div>
-            </form>
+                </form>
             </div>
         </div>
     </div>
@@ -262,4 +268,5 @@ mysqli_close($db);
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-x4dVbZX3EJfXb0wrbkv0OUx+Gy4IS4JgtMlEKtx79A" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-OB3BdNa1ahWOsHk9hr+hbVoJ8y+qElvc99c1nljIC9z8KnOerqqRvlp4LIG7WIEm" crossorigin="anonymous"></script>
 </body>
+
 </html>

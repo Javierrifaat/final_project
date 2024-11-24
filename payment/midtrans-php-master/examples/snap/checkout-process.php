@@ -6,10 +6,10 @@
 namespace Midtrans;
 
 require_once dirname(__FILE__) . '/../../Midtrans.php';
-// Set Your server key
+// Set SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O
 // can find in Merchant Portal -> Settings -> Access keys
-Config::$serverKey = '<your server key>';
-Config::$clientKey = '<your client key>';
+Config::$serverKey = '<SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O>';
+Config::$clientKey = '<SB-Mid-client-uw81o6eb7cacAn_V>';
 
 // non-relevant function only used for demo/example purpose
 printExampleWarningMessage();
@@ -108,11 +108,11 @@ function printExampleWarningMessage()
 {
     if (strpos(Config::$serverKey, 'your ') != false) {
         echo "<code>";
-        echo "<h4>Please set your server key from sandbox</h4>";
+        echo "<h4>Please set SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O from sandbox</h4>";
         echo "In file: " . __FILE__;
         echo "<br>";
         echo "<br>";
-        echo htmlspecialchars('Config::$serverKey = \'<your server key>\';');
+        echo htmlspecialchars('Config::$serverKey = \'<SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O>\';');
         die();
     }
 }
@@ -126,7 +126,7 @@ function printExampleWarningMessage()
     <button id="pay-button">Pay!</button>
     <pre><div id="result-json">JSON result will appear here after payment:<br></div></pre>
 
-    <!-- TODO: Remove ".sandbox" from script src URL for production environment. Also input your client key in "data-client-key" -->
+    <!-- TODO: Remove ".sandbox" from script src URL for production environment. Also input SB-Mid-client-uw81o6eb7cacAn_V in "data-client-key" -->
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="<?php echo Config::$clientKey; ?>"></script>
     <script type="text/javascript">
         document.getElementById('pay-button').onclick = function() {

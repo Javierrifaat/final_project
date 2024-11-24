@@ -13,7 +13,7 @@ if ($order_id && $status_code && $transaction_status) {
     echo "Transaction Status: $transaction_status<br>";
 
     // Daftar tabel yang akan diperiksa
-    $tables = ['tlb', 'tlc', 'tle'];
+    $tables = ['tlb', 'tlc', 'tle', 'tlf'];
     $found = false;
 
     foreach ($tables as $table) {
