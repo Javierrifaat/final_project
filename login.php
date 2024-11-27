@@ -10,17 +10,30 @@ if (isset($_POST['login'])) {
     $hash_password = hash('sha256', $password);
 
     // Query untuk login user
-    $sql = "SELECT * FROM users WHERE (username='$username_or_email' OR email='$username_or_email') AND password='$hash_password' AND role='user'";
-    $result = $db->query($sql);
+    $sql_user = "SELECT * FROM users WHERE (username='$username_or_email' OR email='$username_or_email') AND password='$hash_password' AND role='user'";
+    $result_user = $db->query($sql_user);
 
-    if ($result->num_rows > 0) {
-        $data = $result->fetch_assoc();
+    // Query untuk login admin
+    $admin_email = "admin"; // Ganti dengan email admin yang diinginkan
+    $admin_password = hash('sha256', 'admin'); // Password admin yang di-hash
+
+    if ($result_user->num_rows > 0) {
+        $data = $result_user->fetch_assoc();
         $_SESSION["username"] = $data["username"];
         $_SESSION["role"] = $data["role"];
-        $_SESSION["is_login"] = true;
+        $_SESSION["is_login"] = $data["id"]; // Simpan ID pengguna yang login
 
         // Redirect ke halaman user
         header("location: dashboard.php");
+        exit();
+    } elseif ($username_or_email === $admin_email && $hash_password === $admin_password) {
+        // Jika login sebagai admin
+        $_SESSION["username"] = "Admin"; // Nama admin
+        $_SESSION["role"] = "admin"; // Role admin
+        $_SESSION["is_login"] = true;
+
+        // Redirect ke halaman admin
+        header("location: admin/dashboard_admin.php");
         exit();
     } else {
         $login_message = "Username, Email, atau Password salah!";
@@ -35,7 +48,7 @@ if (isset($_POST['login'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="logo.jpg">
+    <link rel="icon" type="image/png" href="layout/logo.jpg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <title>RSC - LOGIN</title>
     <style>
@@ -45,7 +58,6 @@ if (isset($_POST['login'])) {
             justify-content: center;
             align-items: center;
             height: 100vh;
-            color: #fff;
             font-family: Arial, sans-serif;
         }
         .card {
@@ -131,11 +143,11 @@ if (isset($_POST['login'])) {
             <div class="link-daftar">
                 <p>Tidak punya akun? <a href="register.php">Daftar Sekarang</a></p>
             </div>
-        </form>
+        <!-- </form>
         <div class="link-adminr">
                 <p>Login Admin<a href="admin/login_admin.php"> ADMIN</a></p>
             </div>
-        </form>
+        </form> -->
     </div>
     <!--card login end-->
 

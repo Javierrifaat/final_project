@@ -1,19 +1,52 @@
 <?php
 session_start();
+
+// Logout logic
 if (isset($_POST['logout'])) {
     session_unset();
     session_destroy();
     header('Location: index.php');
 }
+
+// Cek apakah pengguna sudah login
 if (!isset($_SESSION["is_login"])) {
-    echo "You must login";
+    header('Location: index.php');
     die;
 } elseif ($_SESSION["is_login"] == false) {
-    echo "You must login";
+    header('Location: index.php');
     die;
 }
 
+// Menghubungkan ke database
+require 'service/database.php';
 
+// Ambil user_id dari session
+$user_id = $_SESSION['is_login'];
+
+// Menghubungkan ke database
+require 'service/database.php';
+
+// Query untuk mengambil foto profil dari tabel 'update_profil'
+$query = "SELECT profile_picture FROM user_profiles WHERE user_id = ?";
+$stmt = mysqli_prepare($db, $query);
+mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_execute($stmt);
+mysqli_stmt_bind_result($stmt, $profile_picture);
+mysqli_stmt_fetch($stmt);
+mysqli_stmt_close($stmt);
+
+// Menyimpan foto profil di session
+if ($profile_picture) {
+    $_SESSION['profile_picture'] = 'uploads/' . $profile_picture;  // Pastikan path ke folder 'uploads'
+} else {
+    $_SESSION['profile_picture'] = 'path/to/default/profile/picture.jpg';  // Gambar default jika tidak ada foto
+}
+
+// Tutup koneksi database
+mysqli_close($db);
+
+
+// Cek status pembayaran jika ada
 if (isset($_GET['status'])) {
     $status = $_GET['status'];
     if ($status == 'success') {
@@ -67,15 +100,33 @@ if (isset($_GET['status'])) {
                         <a class="nav-link text-light px-3 py-2" href="#contact-section">Contact</a>
                     </li>
                 </ul>
-                <!-- Dropdown untuk Email dan Logout -->
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                        <?= $_SESSION["username"] ?>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                        <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
-                    </ul>
-                </div>
+               <!-- Dropdown untuk Email, Edit Profile, dan Logout -->
+               <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <!-- Menampilkan foto profil -->
+                            <?php if (isset($_SESSION["profile_picture"])): ?>
+                                <img src="<?= $_SESSION["profile_picture"] ?>" alt="Profile Picture" class="img-thumbnail" style="width: 30px; height: 30px; margin-right: 10px;">
+                            <?php else: ?>
+                                <!-- Gambar default jika tidak ada foto profil -->
+                                <img src="path/to/default/profile/picture.jpg" alt="Profile Picture" class="img-thumbnail" style="width: 30px; height: 30px; margin-right: 10px;">
+                            <?php endif; ?>
+                            <span><?= $_SESSION["username"] ?></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item" href="profile/profile.php">Profile</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Form logout -->
+                    <form id="logout-form" method="POST" style="display: none;">
+                        <input type="hidden" name="logout" value="true">
+                    </form>
+
+
+
+
+
                 <form id="logout-form" action="dashboard.php" method="POST" style="display: none;">
                     <input type="hidden" name="logout" value="1">
                 </form>
@@ -211,7 +262,25 @@ if (isset($_GET['status'])) {
     <?php include "layout/footer.html" ?>
     <!--first layout end-->
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</body>
+    <script>
+// Fungsi untuk memperbarui nama pengguna di dashboard secara real-time
+function updateUsername() {
+    // Ambil nama pengguna langsung dari variabel $_SESSION di dalam halaman dashboard
+    let username = '<?php echo isset($_SESSION["username"]) ? $_SESSION["username"] : ""; ?>';
+    
+    if (username) {
+        // Update teks pada dropdown dengan username baru
+        document.getElementById('dropdownMenuButton').textContent = username;
+    } else {
+        console.error('Username tidak ditemukan!');
+    }
+}
 
+// Panggil fungsi updateUsername setiap kali halaman dimuat
+window.onload = updateUsername;
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
 </html>
