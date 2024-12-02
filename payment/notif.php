@@ -12,50 +12,45 @@ if ($order_id && $status_code && $transaction_status) {
     echo "Status Code: $status_code<br>";
     echo "Transaction Status: $transaction_status<br>";
 
+    // Periksa jika transaksi berhasil
     if ($status_code == '200' && $transaction_status == 'settlement') {
-        $tables = ['tlb', 'tlc', 'tle', 'tlf'];
-        $found = false;
+        // Cari data di tabel registrations
+        $sql = "SELECT * FROM registrations WHERE order_id = ?";
+        $stmt = mysqli_prepare($db, $sql);
 
-        foreach ($tables as $table) {
-            $sql = "SELECT * FROM $table WHERE order_id = ?";
-            $stmt = mysqli_prepare($db, $sql);
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "s", $order_id);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
 
-            if ($stmt) {
-                mysqli_stmt_bind_param($stmt, "s", $order_id);
-                mysqli_stmt_execute($stmt);
-                $result = mysqli_stmt_get_result($stmt);
+            if ($result && mysqli_num_rows($result) > 0) {
+                // Data ditemukan, update status pembayaran
+                $update_sql = "UPDATE registrations SET status_pembayaran = 'Berhasil' WHERE order_id = ?";
+                $update_stmt = mysqli_prepare($db, $update_sql);
 
-                if ($result && mysqli_num_rows($result) > 0) {
-                    // Data ditemukan, update status pembayaran
-                    $update_sql = "UPDATE $table SET status_pembayaran = 'success' WHERE order_id = ?";
-                    $update_stmt = mysqli_prepare($db, $update_sql);
-
-                    if ($update_stmt) {
-                        mysqli_stmt_bind_param($update_stmt, "s", $order_id);
-                        if (mysqli_stmt_execute($update_stmt)) {
-                            echo "Pembayaran berhasil diupdate di $table.<br>";
-                            header("Location: /fp/dashboard.php");
-                            exit();
-                        } else {
-                            echo "Gagal mengupdate status pembayaran di $table.<br>";
-                        }
-                        mysqli_stmt_close($update_stmt);
+                if ($update_stmt) {
+                    mysqli_stmt_bind_param($update_stmt, "s", $order_id);
+                    if (mysqli_stmt_execute($update_stmt)) {
+                        echo "Pembayaran berhasil diupdate.<br>";
+                        // Redirect ke bukti pembayaran dengan menyertakan order_id
+                        header("Location: ../service/bukti-pembayaran.php?order_id=" . urlencode($order_id)); 
+                        exit();
+                    } else {
+                        echo "Gagal mengupdate status pembayaran.<br>";
                     }
-
-                    $found = true;
-                    break;
+                    mysqli_stmt_close($update_stmt);
                 }
-                mysqli_stmt_close($stmt);
             } else {
-                error_log("Query Error: " . mysqli_error($db));
+                echo "Order ID tidak ditemukan di tabel registrations.";
             }
-        }
-
-        if (!$found) {
-            echo "Order ID tidak ditemukan di tabel mana pun.";
+            mysqli_stmt_close($stmt);
+        } else {
+            error_log("Query Error: " . mysqli_error($db));
         }
     } else {
         echo "Status transaksi tidak valid untuk update.";
     }
+} else {
+    echo "Data yang diperlukan tidak tersedia.";
 }
 ?>

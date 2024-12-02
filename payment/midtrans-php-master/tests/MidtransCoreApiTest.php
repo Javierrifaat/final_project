@@ -7,8 +7,8 @@ class MidtransCoreApiTest extends \PHPUnit_Framework_TestCase
 
     public function testCharge()
     {
-        Config::$appendNotifUrl = "https://localhost/fp/dashboard.php";
-        Config::$overrideNotifUrl = "https://localhost/fp/dashboard.php";
+        Config::$appendNotifUrl = "https://localhost/fpp/dashboard.php";
+        Config::$overrideNotifUrl = "https://localhost/fpp/dashboard.php";
         Config::$paymentIdempotencyKey = "123456";
         Config::$serverKey = "dummy";
         MT_Tests::$stubHttp = true;
@@ -39,8 +39,8 @@ class MidtransCoreApiTest extends \PHPUnit_Framework_TestCase
             $fields["POSTFIELDS"],
             '{"payment_type":"credit_card","transaction_details":{"order_id":"Order-111","gross_amount":10000}}'
         );
-        $this->assertTrue(in_array('X-Append-Notification: https://localhost/fp/dashboard.php', $fields["HTTPHEADER"]));
-        $this->assertTrue(in_array('X-Override-Notification: https://localhost/fp/dashboard.php', $fields["HTTPHEADER"]));
+        $this->assertTrue(in_array('X-Append-Notification: https://localhost/fpp/dashboard.php', $fields["HTTPHEADER"]));
+        $this->assertTrue(in_array('X-Override-Notification: https://localhost/fpp/dashboard.php', $fields["HTTPHEADER"]));
         $this->assertTrue(in_array('Idempotency-Key: 123456', $fields["HTTPHEADER"]));
     }
 

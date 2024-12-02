@@ -62,7 +62,7 @@ $profilePicture = !empty($user['profile_picture']) ? $user['profile_picture'] : 
                 </div>
                 <div class="mb-3">
                     <label for="phone_number">Nomor WhatsApp:</label>
-                    <input type="text" name="phone_number" id="phone_number" value="<?php echo htmlspecialchars($user['phone_number']); ?>" class="form-control">
+                    <input type="text" name="phone_number" id="phone_number" value="<?php echo htmlspecialchars($user['phone_number'] ?? ''); ?>" class="form-control">
                 </div>
                 <div class="mb-3">
                     <label for="profile_picture">Ganti Foto Profil:</label>

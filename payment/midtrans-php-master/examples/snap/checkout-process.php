@@ -24,8 +24,8 @@ Config::$isSanitized = true;
 Config::$is3ds = true;
 
 // Uncomment for append and override notification URL
-Config::$appendNotifUrl = "https://localhost/fp/dashboard.php";
-Config::$overrideNotifUrl = "https://localhost/fp/dashboard.php";
+Config::$appendNotifUrl = "https://localhost/fpp/dashboard.php";
+Config::$overrideNotifUrl = "https://localhost/fpp/dashboard.php";
 
 // Required
 $transaction_details = array(

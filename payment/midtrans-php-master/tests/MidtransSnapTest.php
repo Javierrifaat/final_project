@@ -8,8 +8,8 @@ class MidtransSnapTest extends \PHPUnit_Framework_TestCase
     public function testGetSnapToken()
     {
         Config::$serverKey = 'MyVerySecretKey';
-        Config::$appendNotifUrl = "https://localhost/fp/dashboard.php";
-        Config::$overrideNotifUrl = "https://localhost/fp/dashboard.php";
+        Config::$appendNotifUrl = "https://localhost/fpp/dashboard.php";
+        Config::$overrideNotifUrl = "https://localhost/fpp/dashboard.php";
         MT_Tests::$stubHttp = true;
         MT_Tests::$stubHttpResponse = '{ "token": "abcdefghijklmnopqrstuvwxyz" }';
         MT_Tests::$stubHttpStatus = array('http_code' => 201);
@@ -38,8 +38,8 @@ class MidtransSnapTest extends \PHPUnit_Framework_TestCase
         $fields = MT_Tests::lastReqOptions();
 
         $this->assertEquals(1, $fields["POST"]);
-        $this->assertTrue(in_array('X-Append-Notification: https://localhost/fp/dashboard.php', $fields["HTTPHEADER"]));
-        $this->assertTrue(in_array('X-Override-Notification: https://localhost/fp/dashboard.php', $fields["HTTPHEADER"]));
+        $this->assertTrue(in_array('X-Append-Notification: https://localhost/fpp/dashboard.php', $fields["HTTPHEADER"]));
+        $this->assertTrue(in_array('X-Override-Notification: https://localhost/fpp/dashboard.php', $fields["HTTPHEADER"]));
         $this->assertEquals(
             $fields["POSTFIELDS"],
             '{"credit_card":{"secure":false},' .

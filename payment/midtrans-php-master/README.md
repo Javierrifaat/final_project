@@ -47,7 +47,7 @@ If you are not using Composer, you can clone or [download](https://github.com/mi
 Then you should require/autoload `Midtrans.php` file on your code.
 
 ```php
-require_once dirname(__FILE__) . '/pathofproject/Midtrans.php';
+require_once dirname(__FILE__) . '/pathofpproject/Midtrans.php';
 
 // my code goes here
 ```
@@ -1013,7 +1013,7 @@ To verify the webhook notification that you recieve you can use this method belo
 };
 
 // to get the signature value, you need to retrieve it from the webhook header called X-Signature
-$xSignature = "CgjmAyC9OZ3pB2JhBRDihL939kS86LjP1VLD1R7LgI4JkvYvskUQrPXgjhrZqU2SFkfPmLtSbcEUw21pg2nItQ0KoX582Y6Tqg4Mn45BQbxo4LTPzkZwclD4WI+aCYePQtUrXpJSTM8D32lSJQQndlloJfzoD6Rh24lNb+zjUpc+YEi4vMM6MBmS26PpCm/7FZ7/OgsVh9rlSNUsuQ/1QFpldA0F8bBNWSW4trwv9bE1NFDzliHrRAnQXrT/J3chOg5qqH0+s3E6v/W21hIrBYZVDTppyJPtTOoCWeuT1Tk9XI2HhSDiSuI3pevzLL8FLEWY/G4M5zkjm/9056LTDw==";
+$xSignature = "CgjmAyC9OZ3pB2JhBRDihL939kS86LjP1VLD1R7LgI4JkvYvskUQrPXgjhrZqU2SFkfppmLtSbcEUw21pg2nItQ0KoX582Y6Tqg4Mn45BQbxo4LTPzkZwclD4WI+aCYePQtUrXpJSTM8D32lSJQQndlloJfzoD6Rh24lNb+zjUpc+YEi4vMM6MBmS26PpCm/7FZ7/OgsVh9rlSNUsuQ/1QfppldA0F8bBNWSW4trwv9bE1NFDzliHrRAnQXrT/J3chOg5qqH0+s3E6v/W21hIrBYZVDTppyJPtTOoCWeuT1Tk9XI2HhSDiSuI3pevzLL8FLEWY/G4M5zkjm/9056LTDw==";
 
 // to get the timeStamp value, you need to retrieve it from the webhook header called X-Timestamp
 $xTimeStamp = "2024-10-07T15:45:22+07:00";

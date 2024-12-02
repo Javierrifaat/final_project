@@ -9,8 +9,8 @@ require_once dirname(__FILE__) . '/../../Midtrans.php';
 
 Config::$serverKey = '<SB-Mid-server-SdGSNrMDhqUgP4KJM_0hTR3O>';
 // Uncomment for append and override notification URL
-Config::$appendNotifUrl = "https://localhost/fp/dashboard.php";
-Config::$overrideNotifUrl = "https://localhost/fp/dashboard.php";
+Config::$appendNotifUrl = "https://localhost/fpp/dashboard.php";
+Config::$overrideNotifUrl = "https://localhost/fpp/dashboard.php";
 
 // non-relevant function only used for demo/example purpose
 printExampleWarningMessage();

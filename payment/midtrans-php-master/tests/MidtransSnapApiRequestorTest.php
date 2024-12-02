@@ -12,11 +12,11 @@ class MidtransSnapApiRequestorTest extends \PHPUnit_Framework_TestCase
         MT_Tests::$stubHttpStatus = array('http_code' => 201);
 
         Config::$curlOptions = array(
-            CURLOPT_HTTPHEADER => array( "User-Agent: testing lib" ),
+            CURLOPT_HTTPHEADER => array("User-Agent: testing lib"),
             CURLOPT_PROXY => "http://proxy.com"
         );
 
-        $resp = ApiRequestor::post("http://localhost/fp/dashboard.php", "dummy", "");
+        $resp = ApiRequestor::post("http://localhost/fpp/dashboard.php", "dummy", "");
 
         $fields = MT_Tests::lastReqOptions();
         $this->assertTrue(in_array("User-Agent: testing lib", $fields["HTTPHEADER"]));
@@ -30,5 +30,4 @@ class MidtransSnapApiRequestorTest extends \PHPUnit_Framework_TestCase
         MT_Tests::reset();
         Config::$curlOptions = array();
     }
-
 }

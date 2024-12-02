@@ -14,8 +14,8 @@ Config::$clientKey = 'SB-Mid-client-uw81o6eb7cacAn_V';
 // non-relevant function only used for demo/example purpose
 printExampleWarningMessage();
 
-Config::$appendNotifUrl = "http://localhost/fp/dashboard.php";
-Config::$overrideNotifUrl = "http://localhost/fp/dashboard.php";
+Config::$appendNotifUrl = "http://localhost/fpp/dashboard.php";
+Config::$overrideNotifUrl = "http://localhost/fpp/dashboard.php";
 // Uncomment for production environment
 // Config::$isProduction = true;
 Config::$isSanitized = Config::$is3ds = true;
