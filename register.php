@@ -46,7 +46,9 @@ if (isset($_POST['register'])) {
     <title>RSC - REGISTRASI</title>
     <style>
         body {
-            background: linear-gradient(to right, #0066cc, #00bfff);
+  background: linear-gradient(to right, rgba(0, 128, 255, 1), rgba(0, 255, 255, 0.8)); /* Gradient biru segar ke aqua cerah */
+  color: #fff; /* Warna teks untuk kontras yang lebih baik */
+
             display: flex;
             justify-content: center;
             align-items: center;
@@ -127,12 +129,13 @@ if (isset($_POST['register'])) {
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Kata Sandi</label>
-                <input type="password" class="form-control" name="password" placeholder="Buat kata sandi" required />
+                <input type="password" class="form-control" id="password" name="password" placeholder="Buat kata sandi" required />
             </div>
             <div class="form-check mb-3">
                 <input type="checkbox" class="form-check-input" id="showPassword" onclick="togglePasswordVisibility()">
                 <label class="form-check-label" for="showPassword">Tampilkan Kata Sandi</label>
             </div>
+
             <button type="submit" name="register" class="btn btn-primary mt-3">Daftar Sekarang</button>
             <div class="link-login">
                 <p>Sudah punya akun? <a href="login.php">Masuk</a></p>

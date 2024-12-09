@@ -82,6 +82,6 @@ if ($profile_picture_path) {
 $db->close();
 
 // Redirect ke halaman profil
-header('Location: profile.php'); // Redirect ke halaman profile setelah update
+header('Location: ../dashboard.php'); // Redirect ke halaman profile setelah update
 exit;
 ?>

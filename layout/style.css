@@ -1,14 +1,8 @@
 body {
-    background: linear-gradient(to right, #0066cc, #00bfff); /* Gradien biru yang sama */
-    color: white; /* Pastikan teks terlihat terang di atas latar belakang gelap */
-  }
-
-  /* Pastikan konten utama juga memiliki latar belakang transparan */
-  .container {
-    background: transparent; /* Membiarkan latar belakang gradien dari body */
-  }
-
-
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to right, rgba(0, 128, 255, 1), rgba(0, 255, 255, 0.8)); /* Gradient biru segar ke aqua cerah */
+  color: #fff; /* Warna teks untuk kontras yang lebih baik */
+}
 
 .navbar {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -19,16 +13,6 @@ body {
     font-size: 1.1rem;
   }
 
-  .btn-outline-light {
-    border-radius: 30px; /* Membuat tombol lebih rounded */
-    transition: all 0.3s ease; /* Efek transisi */
-  }
-
-  .btn-outline-light:hover {
-    background-color: #ffffff;
-    color: #343a40; /* Mengubah warna latar belakang saat hover */
-    border-color: #ffffff; /* Menyesuaikan border saat hover */
-  }
 
   
 
@@ -108,10 +92,6 @@ body {
   }
 
 
-  /* Gradien background untuk navbar */
-  .navbar-light {
-    background: linear-gradient(to right, #0066cc, #00bfff); /* Warna gradien biru */
-  }
 
   .navbar-nav .nav-link {
     font-size: 1.1rem; /* Ukuran teks navbar yang lebih besar */
@@ -120,9 +100,6 @@ body {
     transition: color 0.3s ease;
   }
 
-  .navbar-nav .nav-link:hover {
-    color: #ffffff; /* Warna hover orange pada teks */
-  }
 
   /* Styling untuk tombol Registrasi dan Login */
   .btn-outline-light {
@@ -137,11 +114,6 @@ body {
     background-color: #ffffff; /* Background orange saat hover */
     border-color: #ffffff; /* Border orange saat hover */
   }
-  .navbar-light {
-    background: transparent; /* Navbar tetap transparan */
-  }
-
-
     /* Styling untuk carousel */
     .carousel-inner {
         height: 600px;

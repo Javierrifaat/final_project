@@ -26,7 +26,10 @@ $query = "
         event.event_name,
         registrations.order_id,
         event.event_date,
-        event.event_time
+        event.event_time,
+        registrations.user_id,
+        registrations.event_id,
+        registrations.team_id
     FROM 
         registrations
     JOIN 
@@ -35,101 +38,171 @@ $query = "
         event ON registrations.event_id = event.event_id
     WHERE 
         registrations.order_id = ? 
-        AND registrations.status_pembayaran = 'Berhasil'  -- Sesuaikan dengan status pembayaran yang valid
+        AND registrations.status_pembayaran = 'Berhasil'
 ";
 
-// Persiapkan dan jalankan query dengan menggunakan prepared statement untuk keamanan
+// Persiapkan dan jalankan query
 $stmt = $connection->prepare($query);
 if (!$stmt) {
     die("Query gagal: " . $connection->error);
 }
-$stmt->bind_param('s', $order_id); // 's' untuk parameter string (order_id)
+$stmt->bind_param('s', $order_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Debugging: Menampilkan hasil query untuk memastikan ada data yang ditemukan
 if ($result->num_rows == 0) {
-    // Cek apakah order_id ada di tabel registrations dengan status pembayaran selain 'Berhasil'
-    $check_query = "SELECT * FROM registrations WHERE order_id = ?";
-    $check_stmt = $connection->prepare($check_query);
-    $check_stmt->bind_param('s', $order_id);
-    $check_stmt->execute();
-    $check_result = $check_stmt->get_result();
-    if ($check_result->num_rows > 0) {
-        echo "Order ID ditemukan tetapi status pembayaran belum berhasil.<br>";
-    } else {
-        echo "Order ID tidak ditemukan di tabel registrations.<br>";
-    }
     die("Bukti pembayaran tidak ditemukan atau pembayaran belum lunas.");
 }
 
 // Ambil data dari hasil query
 $data = $result->fetch_assoc();
 
-// Panggil library barcode
+// Ambil team_id, jika kosong, anggap sebagai peserta individu
+$team_id = $data['team_id'] ?? null;
+
+// Tambahkan library QR Code
 require '../vendor/autoload.php';
-use Picqer\Barcode\BarcodeGeneratorHTML;
 
-$generator = new BarcodeGeneratorHTML();
-$barcode = $generator->getBarcode($data['order_id'], $generator::TYPE_CODE_128);
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 
-// Menampilkan bukti pembayaran
+// Konfigurasi QR Code
+$options = new QROptions([
+    'eccLevel' => QRCode::ECC_L,
+    'outputType' => QRCode::OUTPUT_IMAGE_PNG,
+    'imageBase64' => true,
+]);
+
+// Data QR Code
+$qrData = json_encode([
+    'event_id' => $data['event_id'],
+    'team_id' => $team_id, // Tetap tambahkan meskipun null
+    'user_id' => $data['user_id'],
+    'event_name' => $data['event_name'],
+    'email' => $data['email'],
+    'event_date' => $data['event_date'],
+    'event_time' => $data['event_time'],
+]);
+
+// Generate QR Code
+$qrCode = (new QRCode($options))->render($qrData);
 ?>
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bukti Pembayaran</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, rgba(0, 128, 255, 1), rgba(0, 255, 255, 0.8));
+            color: black;
         }
         .receipt {
-            border: 1px solid #000;
-            padding: 20px;
-            max-width: 400px;
-            margin: auto;
-            text-align: center;
+            border: 1px solid #007bff;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 450px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
         .receipt h1 {
-            font-size: 18px;
-            margin-bottom: 10px;
+            font-size: 26px;
+            margin-bottom: 20px;
+            color: #007bff;
+            text-align: center;
         }
-        .receipt .barcode {
+        .receipt hr {
+            border: 1px solid #007bff;
             margin: 20px 0;
         }
-        .btn-back {
-            display: inline-block;
-            padding: 10px 20px;
-            margin-top: 20px;
-            background-color: #4CAF50;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
+        .receipt p {
+            margin: 10px 0;
             font-size: 16px;
+            line-height: 1.5;
+        }
+        .barcode {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .btn-back, .btn-print {
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.3s;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+        .btn-back {
+            background-color: green;
+            color: white;
+            max-width: 200px;
         }
         .btn-back:hover {
-            background-color: #45a049;
+            background-color: darkgreen;
+            transform: scale(1.05);
+        }
+        .btn-print {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-print:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
-    <div class="receipt">
-        <h1>Bukti Pembayaran Lomba</h1>
-        <hr>
-        <p><strong>Email:</strong> <?= htmlspecialchars($data['email']) ?></p>
-        <p><strong>Status Pembayaran:</strong> <?= ucfirst(htmlspecialchars($data['status_pembayaran'])) ?></p>
-        <p><strong>Lomba:</strong> <?= htmlspecialchars($data['event_name']) ?></p>
-        <p><strong>Order ID:</strong> <?= htmlspecialchars($data['order_id']) ?></p>
-        <p><strong>Tanggal Lomba:</strong> <?= htmlspecialchars($data['event_date']) ?></p>
-        <p><strong>Waktu:</strong> <?= htmlspecialchars($data['event_time']) ?></p>
-        <div class="barcode">
-            <?= $barcode ?>
-        </div>
-        <hr>
-        <p>Terima kasih telah mendaftar!</p>
-        <a href="../dashboard.php" class="btn-back">Kembali ke Dashboard</a>
+<div class="receipt" id="receipt">
+    <h1>Bukti Pembayaran Lomba</h1>
+    <hr>
+    <p><strong>Email:</strong> <?= htmlspecialchars($data['email']) ?></p>
+    <p><strong>Status Pembayaran:</strong> <?= ucfirst(htmlspecialchars($data['status_pembayaran'])) ?></p>
+    <p><strong>Lomba:</strong> <?= htmlspecialchars($data['event_name']) ?></p>
+    <p><strong>Order ID:</strong> <?= htmlspecialchars($data['order_id']) ?></p>
+    <p><strong>Tanggal Lomba:</strong> <?= htmlspecialchars($data['event_date']) ?></p>
+    <p><strong>Waktu:</strong> <?= htmlspecialchars($data['event_time']) ?></p>
+    <div class="barcode">
+        <img src="<?= $qrCode ?>" alt="QR Code" />
     </div>
+    <hr>
+    <p>Terima kasih telah mendaftar!</p>
+</div>
+
+<div class="btn-container">
+    <button id="printBtn" class="btn-print">Cetak Bukti Pembayaran</button>
+    <a href="../dashboard.php" class="btn-back">Kembali ke Dashboard</a>
+</div>
+
+<script>
+    document.getElementById('printBtn').addEventListener('click', function () {
+        const receiptContent = document.getElementById('receipt').outerHTML;
+        const printWindow = window.open('', '_blank');
+        printWindow.document.open();
+        printWindow.document.write(
+            `<html>
+            <head>
+                <title>Cetak Bukti Pembayaran</title>
+            </head>
+            <body>${receiptContent}</body>
+            </html>`
+        );
+        printWindow.document.close();
+        printWindow.print();
+    });
+</script>
+
 </body>
 </html>
 

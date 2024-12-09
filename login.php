@@ -53,7 +53,8 @@ if (isset($_POST['login'])) {
     <title>RSC - LOGIN</title>
     <style>
         body {
-            background: linear-gradient(to right, #0066cc, #00bfff);
+            background: linear-gradient(to right, rgba(0, 128, 255, 1), rgba(0, 255, 255, 0.8)); /* Gradient biru segar ke aqua cerah */
+  color: #fff; /* Warna teks untuk kontras yang lebih baik */
             display: flex;
             justify-content: center;
             align-items: center;
