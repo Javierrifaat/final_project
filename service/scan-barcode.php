@@ -18,7 +18,8 @@
 
         function onScanSuccess(decodedText) {
             // Menampilkan hasil scan untuk debugging
-            // document.getElementById("result").innerText = "QR Code berhasil dibaca: " + decodedText;
+            document.getElementById("result").innerText = "QR Code berhasil dibaca: " + decodedText;
+            console.log("Data QR yang akan dikirim: ", decodedText);
 
             // Kirim data QR Code ke proses-presensi.php
             fetch("proses-presensi.php", {
@@ -28,19 +29,29 @@
                 },
                 body: JSON.stringify({ qr_data: decodedText })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Gagal menghubungi server');
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log("Respon dari server: ", data);
                 if (data.success) {
                     alert("Presensi berhasil: " + data.message);
                 } else {
                     alert("Presensi gagal: " + data.message);
                 }
             })
-            .catch(err => console.error("Error:", err));
+            .catch(err => {
+                console.error("Error:", err);
+                alert("Terjadi kesalahan saat mengirim data ke server. Silakan coba lagi.");
+            });
         }
 
         function onScanFailure(error) {
             console.warn("Scan gagal:", error);
+            document.getElementById("result").innerText = "Scan gagal: " + error;
         }
 
         // Konfigurasi HTML5 QR Code

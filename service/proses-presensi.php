@@ -14,6 +14,9 @@ if ($connection->connect_error) {
 $request_body = file_get_contents('php://input');
 $data = json_decode($request_body, true);
 
+// Debugging: Tampilkan data yang diterima dari client
+error_log("Data yang diterima: " . print_r($data, true));
+
 if (!isset($data['qr_data'])) {
     echo json_encode([
         'success' => false,
@@ -25,10 +28,13 @@ if (!isset($data['qr_data'])) {
 // Parsing data QR Code
 $qrData = json_decode($data['qr_data'], true);
 
-if (!$qrData) {
+// Debugging: Tampilkan data QR setelah decoding
+error_log("Data QR setelah decoding: " . print_r($qrData, true));
+
+if (!$qrData || !isset($qrData['event_id']) || !isset($qrData['user_id'])) {
     echo json_encode([
         'success' => false,
-        'message' => 'Format QR Code tidak valid.'
+        'message' => 'Format QR Code tidak valid atau data tidak lengkap.'
     ]);
     exit;
 }
@@ -52,10 +58,10 @@ if ($result->num_rows > 0) {
     exit;
 }
 
-// Simpan presensi ke database
-$insertQuery = "INSERT INTO presensi (event_id, user_id, presensi_status, created_at) VALUES (?, ?, 'Hadir', NOW())";
+// Simpan presensi ke database dengan mencatat waktu presensi dan status 'Hadir'
+$insertQuery = "INSERT INTO presensi (user_id, event_id, presensi_status, presensi_time) VALUES (?, ?, 'Hadir', NOW())";
 $insertStmt = $connection->prepare($insertQuery);
-$insertStmt->bind_param('ii', $event_id, $user_id);
+$insertStmt->bind_param('ii', $user_id, $event_id);
 
 if ($insertStmt->execute()) {
     echo json_encode([
@@ -63,6 +69,8 @@ if ($insertStmt->execute()) {
         'message' => 'Presensi berhasil disimpan.'
     ]);
 } else {
+    // Log jika ada kesalahan saat query
+    error_log("Gagal menyimpan presensi: " . $insertStmt->error);
     echo json_encode([
         'success' => false,
         'message' => 'Gagal menyimpan presensi.'

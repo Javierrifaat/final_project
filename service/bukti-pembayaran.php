@@ -75,6 +75,7 @@ $options = new QROptions([
 
 // Data QR Code
 $qrData = json_encode([
+    'order_id' => $data['order_id'],  // Unik untuk setiap pembayaran
     'event_id' => $data['event_id'],
     'team_id' => $team_id, // Tetap tambahkan meskipun null
     'user_id' => $data['user_id'],
@@ -130,10 +131,10 @@ $qrCode = (new QRCode($options))->render($qrData);
         }
         .btn-container {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             margin-top: 20px;
         }
-        .btn-back, .btn-print {
+        .btn {
             padding: 12px 25px;
             border-radius: 25px;
             font-size: 16px;
@@ -147,7 +148,6 @@ $qrCode = (new QRCode($options))->render($qrData);
         .btn-back {
             background-color: green;
             color: white;
-            max-width: 200px;
         }
         .btn-back:hover {
             background-color: darkgreen;
@@ -181,8 +181,8 @@ $qrCode = (new QRCode($options))->render($qrData);
 </div>
 
 <div class="btn-container">
-    <button id="printBtn" class="btn-print">Cetak Bukti Pembayaran</button>
-    <a href="../dashboard.php" class="btn-back">Kembali ke Dashboard</a>
+    <button id="printBtn" class="btn btn-print">Cetak Bukti Pembayaran</button>
+    <a href="../dashboard.php" class="btn btn-back">Kembali ke Dashboard</a>
 </div>
 
 <script>
